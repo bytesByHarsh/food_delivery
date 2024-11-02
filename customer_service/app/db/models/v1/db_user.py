@@ -1,7 +1,8 @@
 # Built-in Dependencies
+from typing import List
 
 # Third-Party Dependencies
-from sqlmodel import Field
+from sqlmodel import Field, Relationship
 from enum import Enum
 
 # Local Dependencies
@@ -12,6 +13,7 @@ from app.db.models.v1.common import (
     Base,
 )
 from app.core.config import settings
+from app.db.models.v1.db_address import UserAddress
 
 
 class UserPersonalInfoBase(Base):
@@ -27,6 +29,7 @@ class UserPersonalInfoBase(Base):
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
 
     Examples:
     ----------
@@ -34,6 +37,7 @@ class UserPersonalInfoBase(Base):
     - 'name': "Harsh Mittal"
     - 'username': "hm"
     - 'email': "harshmittal2210@gmail.com"
+    - 'phone': "+919876543210"
     """
 
     # Data Columns
@@ -63,6 +67,15 @@ class UserPersonalInfoBase(Base):
         description="User's email address",
         schema_extra={"examples": ["test@example.com"]},
     )  # Todo: Use EmailStr when it's supported by SQLModel (https://github.com/tiangolo/sqlmodel/pull/762)
+
+    phone: str = Field(
+        unique=True,
+        index=True,
+        nullable=False,
+        regex=r"^\+?[1-9]\d{1,14}$",
+        description="Phone number in international format, e.g., +919876543210",
+        schema_extra={"examples": ["+919876543210"]},
+    )
 
 
 class UserMediaBase(Base):
@@ -168,15 +181,26 @@ class UserRoleBase(Base):
     )
 
 
+class UserDeliveryAddress(Base):
+    delivery_addresses: List["UserAddress"] = Relationship(back_populates="customer")
+
+
+# class UserPaymentMethods(Base):
+#     payment_details: List["PaymentDetail"] = Relationship(back_populates="customer")
+
+# class UserOrderList(Base):
+#     orders: List["Order"] = Relationship(back_populates="customer")
+
+
 class User(
     UserPersonalInfoBase,
     UserMediaBase,
     UserPermissionBase,
     UserSecurityBase,
+    UserRoleBase,
     UUIDMixin,
     TimestampMixin,
     SoftDeleteMixin,
-    UserRoleBase,
     table=True,
 ):
     """
@@ -191,6 +215,7 @@ class User(
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     - 'profile_image_url': URL of the user's profile image.
     - 'is_superuser': Indicates whether the user has superuser privileges.
     - 'hashed_password': Hashed password for user authentication.
