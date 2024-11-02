@@ -1,5 +1,5 @@
 # Built-in Dependencies
-from typing import Annotated
+from typing import Annotated, List
 from datetime import datetime
 
 # Third-Party Dependencies
@@ -15,6 +15,7 @@ from app.db.models.v1.db_user import (
     UserRoleBase,
     UserSecurityBase,
 )
+from app.schemas.v1.schema_address import UserAddressRead
 
 
 class UserBase(UserPersonalInfoBase):
@@ -98,6 +99,10 @@ class UserRead(
     pass
 
 
+class UserReadFull(UserRead):
+    addresses: List[UserAddressRead]
+
+
 class UserCreate(
     UserBase,
     UserMediaBase,
@@ -177,6 +182,7 @@ class UserUpdate(
     class Config:
         extra = "forbid"
 
+
 class UserUpdateInternal(UserUpdate):
     """
     API Schema
@@ -213,6 +219,7 @@ class UserDelete(SoftDeleteMixin):
 
     class Config:
         extra = "forbid"
+
 
 class UserRestoreDeleted(BaseModel):
     """

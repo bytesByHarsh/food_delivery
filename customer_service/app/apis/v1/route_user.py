@@ -11,7 +11,7 @@ from sqlalchemy.sql import text
 
 # Local Dependencies
 from app.core.dependencies import CurrentUser, CurrentSuperUser
-from app.db.crud.crud_user import crud_users, create_new_user
+from app.db.crud.crud_user import crud_users, create_new_user, get_full_user_details
 from app.db.session import async_get_db
 from app.core.http_exceptions import (
     DuplicateValueException,
@@ -19,11 +19,7 @@ from app.core.http_exceptions import (
     ForbiddenException,
     # RateLimitException
 )
-from app.schemas.v1.schema_user import (
-    UserCreate,
-    UserUpdate,
-    UserRead,
-)
+from app.schemas.v1.schema_user import UserCreate, UserUpdate, UserRead, UserReadFull
 from app.db.models.v1.db_user import AccessLevel_Enum
 
 from app.utils.paginated import (
@@ -138,11 +134,20 @@ async def read_users(
 
 
 @router.get("/me", response_model=UserRead)
-async def read_users_me(
+async def read_user_me(
     request: Request,
     current_user: CurrentUser,
 ) -> UserRead:
     return current_user
+
+
+@router.get("/me/full", response_model=UserReadFull)
+async def read_user_me_full(
+    request: Request,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    current_user: CurrentUser,
+) -> UserReadFull:
+    return await get_full_user_details(user=current_user, db=db)
 
 
 @router.get("/{username}", response_model=UserRead)

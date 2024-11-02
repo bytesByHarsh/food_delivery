@@ -12,14 +12,14 @@ from app.schemas.v1.schema_user import (
     UserUpdateInternal,
     UserDelete,
     UserCreate,
+    UserReadFull,
+    UserRead,
 )
 
-from app.core.http_exceptions import (
-    DuplicateValueException,
-    # RateLimitException
-)
+from app.core.http_exceptions import DuplicateValueException
 
 from app.core.hashing import Hasher
+from app.db.crud.crud_user_address import get_address_list_details
 
 # CRUD operations for the 'User' model
 CRUDUser = CRUDBase[
@@ -64,3 +64,12 @@ async def get_user(
         return None
 
     return db_user
+
+
+async def get_full_user_details(user: UserRead, db: AsyncSession):
+    address_list = await get_address_list_details(
+        user=user, db=db, items_per_page=100, page=1
+    )
+    address = address_list["data"]
+
+    return UserReadFull(addresses=address, **user.model_dump())
