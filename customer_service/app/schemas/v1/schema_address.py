@@ -35,7 +35,8 @@ class UserAddressRead(UserAddressBase, UUIDMixin):
 class UserAddressCreate(
     UserAddressBase,
 ):
-    model_config = ConfigDict(extra="forbid")  # type : ignore
+    class Config:
+        extra = "forbid"
 
 
 class UserAddressCreateInternal(
@@ -48,7 +49,8 @@ class UserAddressCreateInternal(
 class UserAddressUpdate(
     UserAddressBase,
 ):
-    model_config = ConfigDict(extra="forbid")  # type: ignore
+    class Config:
+        extra = "forbid"
 
 
 class UserAddressUpdateInternal(
