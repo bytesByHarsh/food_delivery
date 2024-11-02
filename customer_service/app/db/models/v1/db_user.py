@@ -68,7 +68,7 @@ class UserPersonalInfoBase(Base):
         schema_extra={"examples": ["test@example.com"]},
     )  # Todo: Use EmailStr when it's supported by SQLModel (https://github.com/tiangolo/sqlmodel/pull/762)
 
-    phone: str  = Field(
+    phone: str = Field(
         unique=True,
         index=True,
         nullable=False,
@@ -180,15 +180,16 @@ class UserRoleBase(Base):
         schema_extra={"Examples": AccessLevel_Enum.GUEST.value},
     )
 
+
 class UserDeliveryAddress(Base):
     delivery_addresses: List["UserAddress"] = Relationship(back_populates="customer")
+
 
 # class UserPaymentMethods(Base):
 #     payment_details: List["PaymentDetail"] = Relationship(back_populates="customer")
 
 # class UserOrderList(Base):
 #     orders: List["Order"] = Relationship(back_populates="customer")
-
 
 
 class User(

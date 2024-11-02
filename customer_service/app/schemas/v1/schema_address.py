@@ -1,9 +1,8 @@
 # Built-in Dependencies
-from typing import Annotated
 from datetime import datetime
 
 # Third-Party Dependencies
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict
 
 # Local Dependencies
 from app.db.models.v1.common import UUIDMixin, TimestampMixin, SoftDeleteMixin
@@ -14,11 +13,10 @@ from app.db.models.v1.db_address import (
     UserAddressUserDetails,
 )
 
-class UserAddressBase(
-    UserAddressInfoBase,
-    UserAddressLocation
-):
+
+class UserAddressBase(UserAddressInfoBase, UserAddressLocation):
     pass
+
 
 class UserAddress(
     UserAddressInfoBase,
@@ -29,27 +27,29 @@ class UserAddress(
 ):
     pass
 
-class UserAddressRead(
-    UserAddressBase,
-    UUIDMixin
-):
+
+class UserAddressRead(UserAddressBase, UUIDMixin):
     pass
+
 
 class UserAddressCreate(
     UserAddressBase,
 ):
-    model_config = ConfigDict(extra="forbid") # type : ignore
+    model_config = ConfigDict(extra="forbid")  # type : ignore
+
 
 class UserAddressCreateInternal(
     UserAddressBase,
 ):
     pass
 
-@optional
+
+@optional()
 class UserAddressUpdate(
     UserAddressBase,
 ):
     model_config = ConfigDict(extra="forbid")  # type: ignore
+
 
 class UserAddressUpdateInternal(
     UserAddressBase,
@@ -59,6 +59,7 @@ class UserAddressUpdateInternal(
 
 class UserAddressDelete(SoftDeleteMixin):
     model_config = ConfigDict(extra="forbid")  # type: ignore
+
 
 class UserAddressRestoreDeleted(BaseModel):
     """
