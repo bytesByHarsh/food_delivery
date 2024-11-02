@@ -37,7 +37,7 @@ from app.core.config import settings
 router = fastapi.APIRouter(tags=["Users"])
 
 
-@router.post("/", response_model=UserRead, status_code=201)
+@router.post("", response_model=UserRead, status_code=201)
 async def signup_user(
     request: Request,
     user: UserCreate,

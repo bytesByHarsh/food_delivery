@@ -32,7 +32,7 @@ class UserAddressLocation(Base):
         description="Longitude coordinate of the address"
     )
 
-class UserAddressBase(Base):
+class UserAddressInfoBase(Base):
     address_line_1: str = Field(
         default="",
         nullable=True
@@ -70,7 +70,7 @@ class UserAddressUserDetails(Base):
 
 
 class UserAddress(
-    UserAddressBase,
+    UserAddressInfoBase,
     UserAddressUserDetails,
     UserAddressLocation,
     UUIDMixin,
