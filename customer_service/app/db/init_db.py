@@ -17,6 +17,7 @@ async def create_first_super_user(session: AsyncSession) -> None:
     name = settings.FIRST_SUPERUSER_NAME
     email = settings.FIRST_SUPERUSER_EMAIL
     username = settings.FIRST_SUPERUSER_USERNAME
+    phone = settings.FIRST_SUPERUSER_PHONE
     # userRole = settings.FIRST_SUPERUSER_ROLE
     hashed_pass = Hasher.get_hash_password(settings.FIRST_SUPERUSER_PASSWORD)
 
@@ -31,6 +32,7 @@ async def create_first_super_user(session: AsyncSession) -> None:
                 name=name,
                 email=email,
                 username=username,
+                phone=phone,
                 hashed_password=hashed_pass,
                 is_superuser=True,
                 profile_image_url="https://www.imageurl.com/first_user.jpg",

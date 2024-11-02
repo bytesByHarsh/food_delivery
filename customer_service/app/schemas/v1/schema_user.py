@@ -30,6 +30,7 @@ class UserBase(UserPersonalInfoBase):
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     """
 
     pass
@@ -56,6 +57,7 @@ class User(
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     - 'profile_image_url': URL of the user's profile image.
     - 'is_superuser': Indicates whether the user has superuser privileges.
     - 'hashed_password': Hashed password for user authentication.
@@ -87,6 +89,7 @@ class UserRead(
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     - 'profile_image_url': URL of the user's profile image.
     - 'id': Unique identifier (UUID) for the user.
     - 'user_role' : role of user.
@@ -112,6 +115,7 @@ class UserCreate(
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     - 'password': User's password.
     """
 
@@ -140,6 +144,7 @@ class UserCreateInternal(UserBase, UserMediaBase, UserRoleBase, UserSecurityBase
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     - 'hashed_password': Hashed password for user authentication.
     """
 
@@ -164,6 +169,7 @@ class UserUpdate(
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     - 'profile_image_url': URL of the user's profile image.
     - 'user_role' : User role
     """
@@ -184,6 +190,7 @@ class UserUpdateInternal(UserUpdate):
     - 'name': User's full name.
     - 'username': User's unique username.
     - 'email': User's unique email address.
+    - 'phone': User's unique phone number.
     - 'profile_image_url': URL of the user's profile image.
     - 'updated_at': Timestamp for the last update of the user record.
     """

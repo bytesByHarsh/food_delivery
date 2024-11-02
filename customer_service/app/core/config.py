@@ -95,6 +95,7 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_EMAIL: str = "harshmittal2210@gmail.com"
     FIRST_SUPERUSER_USERNAME: str = "admin"
     FIRST_SUPERUSER_PASSWORD: str
+    FIRST_SUPERUSER_PHONE: str = "+910000000000"
     DEFAULT_USER_IMAGE: str = "https://www.imageurl.com/profile_image.jpg"
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
@@ -119,6 +120,7 @@ class Settings(BaseSettings):
         return self
 
     DATABASE_USER_TABLE: str = "users"
+    DATABASE_USER_ADDRESS_TABLE: str = "user_address"
 
     STATIC_FILE_FOLDER: str = "static"
     PROFILE_IMAGE_FOLDER: str = "profile_images"
