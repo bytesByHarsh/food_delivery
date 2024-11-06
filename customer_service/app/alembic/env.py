@@ -13,6 +13,7 @@ from app.core.config import settings
 from app.db.models.v1.common import Base
 from app.db.models.v1.db_auth import TokenBlacklist  # noqa
 from app.db.models.v1.db_user import User  # noqa
+from app.db.models.v1.db_order import Order, OrderAddOn, OrderItem  # noqa
 
 
 # this is the Alembic Config object, which provides

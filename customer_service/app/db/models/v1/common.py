@@ -205,3 +205,11 @@ class TransactionStatus(Base):
         description="Any information related to transactions",
         default_factory=None,
     )
+
+
+class Rating_enum(int, Enum):
+    ONE = 1
+    TWO = 2
+    THREE = 3
+    FOUR = 4
+    FIVE = 5

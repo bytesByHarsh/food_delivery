@@ -121,6 +121,9 @@ class Settings(BaseSettings):
 
     DATABASE_USER_TABLE: str = "users"
     DATABASE_USER_ADDRESS_TABLE: str = "user_address"
+    DATABASE_ORDER_TABLE: str = "orders"
+    DATABASE_ORDER_ITEM_TABLE: str = "order_items"
+    DATABASE_ORDER_ITEM_ADDON_TABLE: str = "order_item_addons"
 
     STATIC_FILE_FOLDER: str = "static"
     PROFILE_IMAGE_FOLDER: str = "profile_images"
