@@ -3,7 +3,7 @@ from typing import Optional, List
 from uuid import UUID
 
 # Third-Party Dependencies
-from sqlmodel import Field, Relationship
+from sqlmodel import Field, Relationship, Integer, Column
 from enum import Enum
 
 # Local Dependencies
@@ -58,6 +58,7 @@ class Order_Status_Enum(str, Enum):
     PLACED = "placed"
     ORDERED = "ordered"
     ACCEPTED = "accepted"
+    READY_FOR_PICKUP = "ready_for_pickup"
     ON_THE_WAY = "on_the_way"
     REACHED = "reached"
     DELIVERED = "delivered"
@@ -70,9 +71,9 @@ class OrderBaseInfo(Base):
     customer_id: UUID = Field(nullable=False, index= True)
 
     status: Order_Status_Enum = Field(nullable=False, index= False, default=Order_Status_Enum.ORDERED)
-    food_rating: Rating_enum = Field(nullable=True, index= False, default=None)
+    food_rating: Rating_enum = Field(sa_column=Column(Integer, nullable=True, index=False, default=Rating_enum.THREE))
 
-    delivery_rating: Rating_enum = Field(nullable=True, index= False, default=None)
+    delivery_rating: Rating_enum = Field(sa_column=Column(Integer, nullable=True, index=False, default=Rating_enum.THREE))
     delivery_person_id:UUID = Field(nullable=True, index= False, default=None)
 
     address_id :UUID = Field(nullable=False, index=False, foreign_key=f"{settings.DATABASE_USER_ADDRESS_TABLE}.id")
