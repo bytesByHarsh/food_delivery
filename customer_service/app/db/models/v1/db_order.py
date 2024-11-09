@@ -21,7 +21,7 @@ class OrderAddOnBaseInfo(Base):
     name: str = Field(nullable=False, default="")
     price: float = Field(nullable=False, default=0.0)
     order_item_id: UUID = Field(nullable=False, index= True)
-
+    order_item = Relationship(back_populates="add_ons",)
 
 class OrderAddOn(
     OrderAddOnBaseInfo,
@@ -30,7 +30,6 @@ class OrderAddOn(
     SoftDeleteMixin,
     table=True,
 ):
-    # order_item: "OrderItem" = Relationship(back_populates="add_ons", sa_relationship=True)
     __tablename__ = f"{settings.DATABASE_ORDER_ITEM_ADDON_TABLE}"
 
 class OrderItemBaseInfo(Base):
@@ -41,7 +40,8 @@ class OrderItemBaseInfo(Base):
     quantity:int = Field(nullable=False, default=1)
     price_per_unit:float = Field(nullable=False, default=0.0)
 
-    # add_ons: List["OrderAddOn"] = Relationship(back_populates="order_item", cascade_delete=True, sa_relationship=True)
+    order  = Relationship(back_populates="items")
+    # add_ons: List[OrderAddOn] = Relationship(back_populates="order_item",  )
 
 class OrderItem(
     OrderItemBaseInfo,
@@ -69,24 +69,43 @@ class Order_Status_Enum(str, Enum):
 
 class OrderBaseInfo(Base):
     customer_id: UUID = Field(nullable=False, index= True)
-
-    status: Order_Status_Enum = Field(nullable=False, index= False, default=Order_Status_Enum.ORDERED)
-    food_rating: Rating_enum = Field(sa_column=Column(Integer, nullable=True, index=False, default=Rating_enum.THREE))
-
-    delivery_rating: Rating_enum = Field(sa_column=Column(Integer, nullable=True, index=False, default=Rating_enum.THREE))
-    delivery_person_id:UUID = Field(nullable=True, index= False, default=None)
-
     address_id :UUID = Field(nullable=False, index=False, foreign_key=f"{settings.DATABASE_USER_ADDRESS_TABLE}.id")
-
-    # items: List[OrderItem] = Relationship(back_populates="order" , cascade_delete=True, sa_relationship=True)
+    restaurant_id: str = Field(nullable=False, index=True)
+    # items: List[OrderItem] = Relationship(back_populates="order" , )
     # delivery_address: "UserAddress" = Relationship(back_populates="orders", sa_relationship=True)
+
+class OrderBaseDeliveryBaseInfo(Base):
+    delivery_person_id:str | None = Field(nullable=True, index= False, default=None)
+
+class OrderStatusInfo(Base):
+    status: Order_Status_Enum = Field(nullable=False, index= False, default=Order_Status_Enum.ORDERED)
 
 
 class Order(
     OrderBaseInfo,
+    OrderBaseDeliveryBaseInfo,
+    OrderStatusInfo,
     UUIDMixin,
     TimestampMixin,
     SoftDeleteMixin,
     table=True,
 ):
     __tablename__ = f"{settings.DATABASE_ORDER_TABLE}"
+
+
+class OrderRatingInfoBase(Base):
+    food_rating: Rating_enum | None = Field(sa_column=Column(Integer, nullable=True, index=False, default=None))
+    delivery_rating: Rating_enum | None= Field(sa_column=Column(Integer, nullable=True, index=False, default=None))
+    delivery_person_id:str | None = Field(nullable=True, index= False, default=None)
+    order_id: UUID = Field(nullable=False, foreign_key=f"{settings.DATABASE_ORDER_TABLE}.id")
+    user_id: UUID = Field(nullable=False, foreign_key=f"{settings.DATABASE_USER_TABLE}.id")
+    restaurant_id: str = Field(nullable=False)
+
+class OrderRating(
+    OrderRatingInfoBase,
+    UUIDMixin,
+    TimestampMixin,
+    SoftDeleteMixin,
+    table=True,
+):
+    __tablename__ = f"{settings.DATABASE_ORDER_RATING_TABLE}"

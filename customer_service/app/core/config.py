@@ -124,6 +124,7 @@ class Settings(BaseSettings):
     DATABASE_ORDER_TABLE: str = "orders"
     DATABASE_ORDER_ITEM_TABLE: str = "order_items"
     DATABASE_ORDER_ITEM_ADDON_TABLE: str = "order_item_addons"
+    DATABASE_ORDER_RATING_TABLE: str = "order_rating"
 
     STATIC_FILE_FOLDER: str = "static"
     PROFILE_IMAGE_FOLDER: str = "profile_images"
