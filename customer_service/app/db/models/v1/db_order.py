@@ -20,7 +20,7 @@ from app.core.config import settings
 class OrderAddOnBaseInfo(Base):
     name: str = Field(nullable=False, default="")
     price: float = Field(nullable=False, default=0.0)
-    order_item_id: UUID = Field(nullable=False, index= True)
+    order_item_id: UUID = Field(nullable=False, index= True, foreign_key=f"{settings.DATABASE_ORDER_ITEM_TABLE}.id")
     order_item = Relationship(back_populates="add_ons",)
 
 class OrderAddOn(
@@ -33,9 +33,8 @@ class OrderAddOn(
     __tablename__ = f"{settings.DATABASE_ORDER_ITEM_ADDON_TABLE}"
 
 class OrderItemBaseInfo(Base):
-    order_id: UUID = Field(nullable=False, index= True)
+    order_id: UUID = Field(nullable=False, index= True, foreign_key=f"{settings.DATABASE_ORDER_TABLE}.id")
     product_id: UUID = Field(nullable=False, index= False)
-    payment_id: UUID = Field(nullable=True, index= False)
     name: str = Field(nullable=False, default="")
     quantity:int = Field(nullable=False, default=1)
     price_per_unit:float = Field(nullable=False, default=0.0)
@@ -68,7 +67,7 @@ class Order_Status_Enum(str, Enum):
 
 
 class OrderBaseInfo(Base):
-    customer_id: UUID = Field(nullable=False, index= True)
+    customer_id: UUID = Field(nullable=False, index= True, foreign_key=f"{settings.DATABASE_USER_TABLE}.id")
     address_id :UUID = Field(nullable=False, index=False, foreign_key=f"{settings.DATABASE_USER_ADDRESS_TABLE}.id")
     restaurant_id: str = Field(nullable=False, index=True)
     # items: List[OrderItem] = Relationship(back_populates="order" , )
@@ -80,11 +79,14 @@ class OrderBaseDeliveryBaseInfo(Base):
 class OrderStatusInfo(Base):
     status: Order_Status_Enum = Field(nullable=False, index= False, default=Order_Status_Enum.ORDERED)
 
+class OrderPaymentDetails(Base):
+    payment_id: UUID | None = Field(nullable=True, index= False)
 
 class Order(
     OrderBaseInfo,
     OrderBaseDeliveryBaseInfo,
     OrderStatusInfo,
+    OrderPaymentDetails,
     UUIDMixin,
     TimestampMixin,
     SoftDeleteMixin,
