@@ -1,0 +1,18 @@
+Install FastAPI and PostgreSQL dependencies:
+
+pip install fastapi sqlalchemy psycopg2-binary uvicorn
+
+Running the Application
+
+uvicorn main:app --reload
+Visit http://127.0.0.1:8000/docs to view the automatically generated API documentation and test your endpoints.
+
+Create the PostgreSQL Database
+
+psql -U postgres
+CREATE DATABASE restaurant_db;
+
+Create Tabular Data 
+python create_sample_db.py
+
+psql -U postgres -d restaurant_db
