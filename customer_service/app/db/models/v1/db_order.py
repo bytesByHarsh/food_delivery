@@ -17,14 +17,17 @@ from app.db.models.v1.common import (
 from app.core.config import settings
 # from app.db.models.v1.db_address import UserAddress
 
+class OrderAddOnRelation(Base):
+    order_item_id: UUID = Field(nullable=False, index= True, foreign_key=f"{settings.DATABASE_ORDER_ITEM_TABLE}.id")
+    order_item = Relationship(back_populates="add_ons",)
 class OrderAddOnBaseInfo(Base):
     name: str = Field(nullable=False, default="")
     price: float = Field(nullable=False, default=0.0)
-    order_item_id: UUID = Field(nullable=False, index= True, foreign_key=f"{settings.DATABASE_ORDER_ITEM_TABLE}.id")
-    order_item = Relationship(back_populates="add_ons",)
+
 
 class OrderAddOn(
     OrderAddOnBaseInfo,
+    OrderAddOnRelation,
     UUIDMixin,
     TimestampMixin,
     SoftDeleteMixin,
@@ -32,18 +35,22 @@ class OrderAddOn(
 ):
     __tablename__ = f"{settings.DATABASE_ORDER_ITEM_ADDON_TABLE}"
 
-class OrderItemBaseInfo(Base):
+
+class OrderItemRelations(Base):
     order_id: UUID = Field(nullable=False, index= True, foreign_key=f"{settings.DATABASE_ORDER_TABLE}.id")
+    order  = Relationship(back_populates="items")
+
+class OrderItemBaseInfo(Base):
     product_id: UUID = Field(nullable=False, index= False)
     name: str = Field(nullable=False, default="")
     quantity:int = Field(nullable=False, default=1)
     price_per_unit:float = Field(nullable=False, default=0.0)
 
-    order  = Relationship(back_populates="items")
     # add_ons: List[OrderAddOn] = Relationship(back_populates="order_item",  )
 
 class OrderItem(
     OrderItemBaseInfo,
+    OrderItemRelations,
     UUIDMixin,
     TimestampMixin,
     SoftDeleteMixin,

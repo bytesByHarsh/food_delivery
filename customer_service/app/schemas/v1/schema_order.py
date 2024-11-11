@@ -1,4 +1,5 @@
 # Built-in Dependencies
+from uuid import uuid4, UUID
 from typing import Annotated, List
 from datetime import datetime
 
@@ -15,7 +16,9 @@ from app.db.models.v1.db_order import (
     OrderBaseInfo,
     OrderBaseDeliveryBaseInfo,
     OrderStatusInfo,
-    OrderPaymentDetails
+    OrderPaymentDetails,
+    OrderItemRelations,
+    OrderAddOnRelation
 )
 
 class OrderAddOnBase(OrderAddOnBaseInfo):
@@ -23,13 +26,18 @@ class OrderAddOnBase(OrderAddOnBaseInfo):
 
 class OrderAddOn(
     OrderAddOnBase,
+    OrderAddOnRelation,
     UUIDMixin,
     TimestampMixin,
     SoftDeleteMixin,
 ):
     pass
 
-class OrderAddOnRead(OrderAddOnBase, UUIDMixin):
+class OrderAddOnRead(
+    OrderAddOnBase,
+    OrderAddOnRelation,
+    UUIDMixin
+):
     pass
 
 class OrderAddOnCreate(
@@ -40,6 +48,7 @@ class OrderAddOnCreate(
 
 class OrderAddOnCreateInternal(
     OrderAddOnBase,
+    OrderAddOnRelation
 ):
     pass
 
@@ -68,26 +77,32 @@ class OrderItemBase(OrderItemBaseInfo):
 
 class OrderItem(
     OrderItemBase,
+    OrderItemRelations,
     UUIDMixin,
     TimestampMixin,
     SoftDeleteMixin,
 ):
     pass
 
-class OrderItemRead(OrderItemBase, UUIDMixin):
+class OrderItemRead(
+    OrderItemBase,
+    OrderItemRelations,
+    UUIDMixin
+):
     pass
 
 
 class OrderItemCreate(
     OrderItemBase,
 ):
-    add_ons: List[OrderAddOnCreate] = Field(default=[OrderAddOnCreate()])
+    add_ons: List[OrderAddOnCreate] = Field(default=[])
     class Config:
         extra = "forbid"
 
 
 class OrderItemCreateInternal(
     OrderItemBase,
+    OrderItemRelations
 ):
     pass
 

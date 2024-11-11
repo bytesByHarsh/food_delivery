@@ -45,4 +45,4 @@ async def create_order(
     db: Annotated[AsyncSession, Depends(async_get_db)],
     current_user: CurrentUser,
 ) -> Any:
-    await add_new_order(user=current_user, order=order, db=db)
+    return await add_new_order(user=current_user, order=order, db=db)

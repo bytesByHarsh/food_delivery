@@ -9,7 +9,8 @@ from app.schemas.v1.schema_user import UserRead
 from app.db.models.v1.db_order import (
     Order,
     OrderItem,
-    OrderAddOn
+    OrderAddOn,
+    Order_Status_Enum
 )
 from app.schemas.v1.schema_order import (
     OrderCreateInternal,
@@ -80,4 +81,37 @@ async def add_new_order(
     order: OrderCreate,
     db: AsyncSession
 ):
-    print(order)
+
+    order_c  = OrderCreateInternal(
+        customer_id=order.customer_id,
+        address_id=order.address_id,
+        restaurant_id=order.restaurant_id,
+    )
+
+    order_db = await crud_order.create(db=db, object=order_c)
+
+    ## parse orders items
+    for item in order.items:
+        item_c = OrderItemCreateInternal(order_id=order_db.id,**item.model_dump())
+        item_db = await crud_orderItem.create(db=db, object=item_c)
+        for add_on in item.add_ons:
+            add_on_c = OrderAddOnCreateInternal(
+                order_item_id= item_db.id,
+                name=add_on.name,
+                price=add_on.price,
+            )
+            await crud_orderAddOn.create(db=db, object=add_on_c)
+    return order_db
+
+
+async def update_order_status(
+    user_id: UUID | None,
+    restaurant_id,
+    driver_id,
+    order_id: UUID,
+    db: AsyncSession
+):
+    order_db = await crud_order.get(db=db, id=order_id)
+
+    # if user_id is not None:
+    #     if order_db.us
