@@ -24,13 +24,13 @@ from app.schemas.v1.schema_order import (
     OrderItemUpdate,
     OrderItemUpdateInternal,
     OrderItemDelete,
-    OrderItemCreate,
+    OrderItemRead,
 
     OrderAddOnCreateInternal,
     OrderAddOnUpdate,
     OrderAddOnUpdateInternal,
     OrderAddOnDelete,
-    OrderAddOnCreate,
+    OrderAddOnRead
 )
 from app.core.http_exceptions import NotFoundException, ForbiddenException
 
@@ -108,7 +108,31 @@ async def get_order_details(
     order_id: UUID,
     db: AsyncSession,
 ):
-    return await crud_order.get(db=db, id=order_id)
+    order_db = await crud_order.get(db=db, id=order_id)
+
+    items = await crud_orderItem.get_multi(
+        db=db,
+        limit=100,
+        offset=0,
+        is_deleted=False,
+        schema_to_select=OrderItemRead,
+        order_id=order_db["id"]
+    )
+    items = items["data"]
+    for item in items:
+        add_ons = await crud_orderAddOn.get_multi(
+            db=db,
+            limit=100,
+            offset=0,
+            is_deleted=False,
+            schema_to_select=OrderAddOnRead,
+            order_item_id = item["id"]
+        )
+        add_ons = add_ons["data"]
+        item["add_ons"] = add_ons
+    order_db["items"] = items
+
+    return order_db
 
 async def get_order_list(
     user: UserRead,

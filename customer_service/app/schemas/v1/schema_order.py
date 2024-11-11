@@ -148,6 +148,7 @@ class OrderRead(
     OrderStatusInfo,
     OrderPaymentDetails
 ):
+    items:list = []
     pass
 
 
