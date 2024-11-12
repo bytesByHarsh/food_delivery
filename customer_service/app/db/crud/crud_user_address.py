@@ -68,6 +68,7 @@ async def get_address_list_details(
         limit=items_per_page,
         schema_to_select=UserAddressRead,
         is_deleted=False,
+        customer_id = user.id
     )
     return paginated_response(
         crud_data=address_data, page=page, items_per_page=items_per_page

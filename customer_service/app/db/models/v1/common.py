@@ -2,7 +2,7 @@
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
 from typing import Optional, Any
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 # Third-Party Dependencies
@@ -205,3 +205,11 @@ class TransactionStatus(Base):
         description="Any information related to transactions",
         default_factory=None,
     )
+
+
+class Rating_enum(IntEnum):
+    ONE = 1
+    TWO = 2
+    THREE = 3
+    FOUR = 4
+    FIVE = 5
