@@ -87,10 +87,11 @@ async def add_new_order(
         customer_id=order.customer_id,
         address_id=order.address_id,
         restaurant_id=order.restaurant_id,
+        total_cost=0.0
     )
 
     order_db = await crud_order.create(db=db, object=order_c)
-
+    total_price = 0
     ## parse orders items
     for item in order.items:
         item_c = OrderItemCreateInternal(order_id=order_db.id,**item.model_dump())
@@ -101,7 +102,11 @@ async def add_new_order(
                 name=add_on.name,
                 price=add_on.price,
             )
+            total_price += add_on.price
             await crud_orderAddOn.create(db=db, object=add_on_c)
+        total_price += (item.price_per_unit*item.quantity)
+    order_db.total_cost = total_price
+    await crud_order.update(db=db, object=order_db, id=order_db.id)
     return order_db
 
 async def get_order_details(

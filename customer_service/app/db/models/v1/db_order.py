@@ -77,6 +77,7 @@ class OrderBaseInfo(Base):
     customer_id: UUID = Field(nullable=False, index= True, foreign_key=f"{settings.DATABASE_USER_TABLE}.id")
     address_id :UUID = Field(nullable=False, index=False, foreign_key=f"{settings.DATABASE_USER_ADDRESS_TABLE}.id")
     restaurant_id: str = Field(nullable=False, index=True)
+    total_cost: float = Field(nullable=False, default=0)
     # items: List[OrderItem] = Relationship(back_populates="order" , )
     # delivery_address: "UserAddress" = Relationship(back_populates="orders", sa_relationship=True)
 
