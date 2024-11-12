@@ -1,6 +1,5 @@
 # Built-in Dependencies
-from uuid import uuid4, UUID
-from typing import Annotated, List
+from typing import List
 from datetime import datetime
 
 # Third-Party Dependencies
@@ -18,11 +17,13 @@ from app.db.models.v1.db_order import (
     OrderStatusInfo,
     OrderPaymentDetails,
     OrderItemRelations,
-    OrderAddOnRelation
+    OrderAddOnRelation,
 )
+
 
 class OrderAddOnBase(OrderAddOnBaseInfo):
     pass
+
 
 class OrderAddOn(
     OrderAddOnBase,
@@ -33,12 +34,10 @@ class OrderAddOn(
 ):
     pass
 
-class OrderAddOnRead(
-    OrderAddOnBase,
-    OrderAddOnRelation,
-    UUIDMixin
-):
+
+class OrderAddOnRead(OrderAddOnBase, OrderAddOnRelation, UUIDMixin):
     pass
+
 
 class OrderAddOnCreate(
     OrderAddOnBase,
@@ -46,11 +45,10 @@ class OrderAddOnCreate(
     class Config:
         extra = "forbid"
 
-class OrderAddOnCreateInternal(
-    OrderAddOnBase,
-    OrderAddOnRelation
-):
+
+class OrderAddOnCreateInternal(OrderAddOnBase, OrderAddOnRelation):
     pass
+
 
 @optional()
 class OrderAddOnUpdate(
@@ -58,6 +56,7 @@ class OrderAddOnUpdate(
 ):
     class Config:
         extra = "forbid"
+
 
 class OrderAddOnUpdateInternal(
     OrderAddOnBase,
@@ -68,12 +67,15 @@ class OrderAddOnUpdateInternal(
 class OrderAddOnDelete(SoftDeleteMixin):
     model_config = ConfigDict(extra="forbid")  # type: ignore
 
+
 class OrderAddOnRestoreDeleted(BaseModel):
     is_deleted: bool
+
 
 ## Order Item
 class OrderItemBase(OrderItemBaseInfo):
     pass
+
 
 class OrderItem(
     OrderItemBase,
@@ -84,11 +86,8 @@ class OrderItem(
 ):
     pass
 
-class OrderItemRead(
-    OrderItemBase,
-    OrderItemRelations,
-    UUIDMixin
-):
+
+class OrderItemRead(OrderItemBase, OrderItemRelations, UUIDMixin):
     pass
 
 
@@ -96,14 +95,12 @@ class OrderItemCreate(
     OrderItemBase,
 ):
     add_ons: List[OrderAddOnCreate] = Field(default=[])
+
     class Config:
         extra = "forbid"
 
 
-class OrderItemCreateInternal(
-    OrderItemBase,
-    OrderItemRelations
-):
+class OrderItemCreateInternal(OrderItemBase, OrderItemRelations):
     pass
 
 
@@ -126,12 +123,13 @@ class OrderItemDelete(SoftDeleteMixin):
 
 
 class OrderItemRestoreDeleted(BaseModel):
-
     is_deleted: bool
+
 
 ## Order
 class OrderBase(OrderBaseInfo):
     pass
+
 
 class Order(
     OrderBase,
@@ -141,14 +139,15 @@ class Order(
 ):
     pass
 
+
 class OrderRead(
     OrderBase,
     UUIDMixin,
     OrderBaseDeliveryBaseInfo,
     OrderStatusInfo,
-    OrderPaymentDetails
+    OrderPaymentDetails,
 ):
-    items:list = []
+    items: list = []
     pass
 
 
@@ -156,6 +155,7 @@ class OrderCreate(
     OrderBase,
 ):
     items: List[OrderItemCreate] = Field(default=[])
+
     class Config:
         extra = "forbid"
 
@@ -175,10 +175,7 @@ class OrderUpdate(
 
 
 class OrderUpdateInternal(
-    OrderBase,
-    OrderBaseDeliveryBaseInfo,
-    OrderStatusInfo,
-    OrderPaymentDetails
+    OrderBase, OrderBaseDeliveryBaseInfo, OrderStatusInfo, OrderPaymentDetails
 ):
     updated_at: datetime
 
@@ -188,5 +185,4 @@ class OrderDelete(SoftDeleteMixin):
 
 
 class OrderRestoreDeleted(BaseModel):
-
     is_deleted: bool

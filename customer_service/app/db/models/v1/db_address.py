@@ -1,5 +1,5 @@
 # Built-in Dependencies
-from typing import Optional, List
+from typing import Optional
 from uuid import UUID
 
 # Third-Party Dependencies
@@ -14,7 +14,7 @@ from app.db.models.v1.common import (
     Base,
 )
 from app.core.config import settings
-from app.db.models.v1.db_order import Order
+
 
 class UserAddressType_Enum(str, Enum):
     HOME = "home"
@@ -61,4 +61,3 @@ class UserAddress(
 ):
     __tablename__ = f"{settings.DATABASE_USER_ADDRESS_TABLE}"
     # orders: List["Order"] = Relationship(back_populates="delivery_address") # List["Order"]
-

@@ -6,12 +6,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 # Local Dependencies
 from app.db.crud.base import CRUDBase
 from app.schemas.v1.schema_user import UserRead
-from app.db.models.v1.db_order import (
-    Order,
-    OrderItem,
-    OrderAddOn,
-    Order_Status_Enum
-)
+from app.db.models.v1.db_order import Order, OrderItem, OrderAddOn, Order_Status_Enum
 from app.schemas.v1.schema_order import (
     OrderCreateInternal,
     OrderUpdate,
@@ -19,20 +14,18 @@ from app.schemas.v1.schema_order import (
     OrderDelete,
     OrderCreate,
     OrderRead,
-
     OrderItemCreateInternal,
     OrderItemUpdate,
     OrderItemUpdateInternal,
     OrderItemDelete,
     OrderItemRead,
-
     OrderAddOnCreateInternal,
     OrderAddOnUpdate,
     OrderAddOnUpdateInternal,
     OrderAddOnDelete,
-    OrderAddOnRead
+    OrderAddOnRead,
 )
-from app.core.http_exceptions import NotFoundException, ForbiddenException
+from app.core.http_exceptions import ForbiddenException
 
 from app.utils.paginated import (
     paginated_response,
@@ -77,37 +70,33 @@ CRUDOrderAddOn = CRUDBase[
 crud_orderAddOn = CRUDOrderAddOn(OrderAddOn)
 
 
-async def add_new_order(
-    user: UserRead,
-    order: OrderCreate,
-    db: AsyncSession
-):
-
-    order_c  = OrderCreateInternal(
+async def add_new_order(user: UserRead, order: OrderCreate, db: AsyncSession):
+    order_c = OrderCreateInternal(
         customer_id=order.customer_id,
         address_id=order.address_id,
         restaurant_id=order.restaurant_id,
-        total_cost=0.0
+        total_cost=0.0,
     )
 
     order_db = await crud_order.create(db=db, object=order_c)
-    total_price = 0
+    total_price: float = 0
     ## parse orders items
     for item in order.items:
-        item_c = OrderItemCreateInternal(order_id=order_db.id,**item.model_dump())
+        item_c = OrderItemCreateInternal(order_id=order_db.id, **item.model_dump())
         item_db = await crud_orderItem.create(db=db, object=item_c)
         for add_on in item.add_ons:
             add_on_c = OrderAddOnCreateInternal(
-                order_item_id= item_db.id,
+                order_item_id=item_db.id,
                 name=add_on.name,
                 price=add_on.price,
             )
             total_price += add_on.price
             await crud_orderAddOn.create(db=db, object=add_on_c)
-        total_price += (item.price_per_unit*item.quantity)
+        total_price += item.price_per_unit * item.quantity
     order_db.total_cost = total_price
-    await crud_order.update(db=db, object=order_db, id=order_db.id)
+    await crud_order.update(db=db, object=order_db, id=order_db.id)  # type:ignore
     return order_db
+
 
 async def get_order_details(
     order_id: UUID,
@@ -121,7 +110,7 @@ async def get_order_details(
         offset=0,
         is_deleted=False,
         schema_to_select=OrderItemRead,
-        order_id=order_db["id"]
+        order_id=order_db["id"],
     )
     items = items["data"]
     for item in items:
@@ -131,13 +120,14 @@ async def get_order_details(
             offset=0,
             is_deleted=False,
             schema_to_select=OrderAddOnRead,
-            order_item_id = item["id"]
+            order_item_id=item["id"],  # type:ignore
         )
         add_ons = add_ons["data"]
-        item["add_ons"] = add_ons
+        item["add_ons"] = add_ons  # type:ignore
     order_db["items"] = items
 
     return order_db
+
 
 async def get_order_list(
     user: UserRead,
@@ -151,11 +141,12 @@ async def get_order_list(
         limit=items_per_page,
         schema_to_select=OrderRead,
         is_deleted=False,
-        customer_id=user.id
+        customer_id=user.id,
     )
     return paginated_response(
         crud_data=order_data, page=page, items_per_page=items_per_page
     )
+
 
 async def update_order_status(
     order_id: UUID,
@@ -166,7 +157,7 @@ async def update_order_status(
     driver_id: str | None = None,
 ):
     order_db = await crud_order.get(db=db, id=order_id)
-    check_fag:bool = False
+    check_fag: bool = False
     if customer_id is not None:
         check_fag = True
         if order_db["customer_id"] != customer_id:
@@ -175,7 +166,9 @@ async def update_order_status(
     if restaurant_id is not None:
         check_fag = True
         if order_db["restaurant_id"] != restaurant_id:
-            raise ForbiddenException("Different Restaurant Trying to update order status")
+            raise ForbiddenException(
+                "Different Restaurant Trying to update order status"
+            )
 
     if driver_id is not None:
         check_fag = True
