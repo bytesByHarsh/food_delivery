@@ -11,6 +11,8 @@ from alembic import context
 # Local Dependencies
 from app.core.config import settings
 from app.db.models.v1.common import Base
+from app.db.models.v1.db_menu import ItemAddOn, MenuItem
+from app.db.models.v1.db_restaurant import Restaurant
 
 
 # this is the Alembic Config object, which provides
