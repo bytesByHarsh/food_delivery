@@ -21,10 +21,11 @@ from app.apis.base import api_router
 
 
 description = """
-Fastapi Template
+Customer Microservice
 ## API Supported
-- User Details
-- Basic Functionalities
+- User APIs
+- Order APIs
+- User Address APIs
 """
 
 tags_metadata = [
