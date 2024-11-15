@@ -14,8 +14,8 @@ from jose import jwt, JWTError
 # Local Dependencies
 from app.core.config import settings
 from app.schemas.v1.schema_auth import TokenData, TokenBlacklistCreate
-# from app.db.crud.crud_auth import crud_token_blacklist
-# from app.db.crud.crud_user import crud_users, get_user
+from app.db.crud.crud_auth import crud_token_blacklist
+from app.db.crud.crud_restaurant import crud_restaurants, get_restaurant
 from app.core.hashing import Hasher
 
 
@@ -63,7 +63,7 @@ oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/auth/login")
 async def authenticate_user(
     username_or_email: str, password: str, db: AsyncSession
 ) -> Union[Dict[str, Any], Literal[False]]:
-    db_user = await get_user(username_or_email, db)
+    db_user = await get_restaurant(username_or_email, db)
 
     if not db_user:
         return False
@@ -152,7 +152,7 @@ async def verify_token(token: str, db: AsyncSession) -> TokenData | None:
         #         return TokenData(username_or_email=username_or_email)
 
         # If not active in Redis or Redis is not available, check PostgreSQL
-        user = await crud_users.get(db=db, username=username_or_email, is_deleted=False)
+        user = await crud_restaurants.get(db=db, username=username_or_email, is_deleted=False)
 
         if user:
             # Update Redis with user active status if Redis is available
