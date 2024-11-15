@@ -24,6 +24,7 @@ from app.schemas.v1.schema_order import (
     OrderAddOnUpdateInternal,
     OrderAddOnDelete,
     OrderAddOnRead,
+    OrderUpdateDriverDetails,
 )
 from app.core.http_exceptions import ForbiddenException
 
@@ -179,3 +180,10 @@ async def update_order_status(
     order_db["status"] = status
     await crud_order.update(db=db, object=order_db, id=order_id)
     return True
+
+async def update_driver(
+    order_id: UUID,
+    driver_details: OrderUpdateDriverDetails,
+    db: AsyncSession,
+):
+    await crud_order.update(db=db, object=driver_details, id=order_id)

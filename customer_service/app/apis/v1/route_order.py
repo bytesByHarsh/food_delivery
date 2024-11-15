@@ -14,9 +14,10 @@ from app.db.crud.crud_order import (
     update_order_status,
     get_order_details,
     get_order_list,
+    update_driver,
 )
 from app.db.session import async_get_db
-from app.schemas.v1.schema_order import OrderCreate, OrderRead
+from app.schemas.v1.schema_order import OrderCreate, OrderRead, OrderUpdateDriverDetails
 
 from app.db.models.v1.db_order import Order_Status_Enum
 from app.utils.paginated import (
@@ -78,3 +79,12 @@ async def update_status(
     if status:
         return {"status": "Updated"}
     return {"status": "Not Updated, Check value sent"}
+
+@router.post("/{order_id}/assign", response_model=OrderRead, status_code=200)
+async def create_order(
+    request: Request,
+    order_id: UUID,
+    driver_details:OrderUpdateDriverDetails,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+) -> Any:
+    return await update_driver(db=db, driver_details=driver_details, order_id=order_id)

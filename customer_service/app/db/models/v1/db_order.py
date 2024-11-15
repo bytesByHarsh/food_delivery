@@ -101,7 +101,8 @@ class OrderBaseInfo(Base):
 
 
 class OrderBaseDeliveryBaseInfo(Base):
-    delivery_person_id: str | None = Field(nullable=True, index=False, default=None)
+    delivery_person_id: int | None = Field(nullable=True, index=False, default=None)
+    delivery_person_name: str | None = Field(nullable=True, index=False, default=None)
 
 
 class OrderStatusInfo(Base):

@@ -186,3 +186,7 @@ class OrderDelete(SoftDeleteMixin):
 
 class OrderRestoreDeleted(BaseModel):
     is_deleted: bool
+
+
+class OrderUpdateDriverDetails(OrderBaseDeliveryBaseInfo):
+    model_config = ConfigDict(extra="forbid")  # type: ignore
