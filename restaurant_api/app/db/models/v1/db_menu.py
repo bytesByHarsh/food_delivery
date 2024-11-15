@@ -20,9 +20,8 @@ class ItemAddOnBaseInfo(Base):
     description:str = Field(nullable=False, default="", index=False)
     price:float = Field(nullable=False, default=0.0, index=False)
     available:bool = Field(nullable=False, default=True, index=False)
-    item_id:UUID = Field(nullable=False, index=True)
-
 class ItemAddOnRelation(Base):
+    item_id:UUID = Field(nullable=False, index=True, foreign_key=f"{settings.DATABASE_MENU_ITEM_TABLE}.id")
     item = Relationship(back_populates="add_ons")
 
 class ItemAddOn(
@@ -40,10 +39,9 @@ class MenuItemBaseInfo(Base):
     description:str = Field(nullable=False, default="", index=False)
     price:float = Field(nullable=False, default=0.0, index=False)
     available:bool = Field(nullable=False, default=True, index=False)
-    menu_id:UUID = Field(nullable=False, index=True)
 
 class MenuItemRelation(Base):
-    restaurant_id:UUID = Field(nullable=False, index=False)
+    restaurant_id:UUID = Field(nullable=False, index=False, foreign_key=f"{settings.DATABASE_RESTAURANT_TABLE}.id")
     restaurant = Relationship(back_populates="menu_items")
     add_ons = Relationship(back_populates="item")
 
