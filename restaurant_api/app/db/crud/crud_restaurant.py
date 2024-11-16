@@ -1,4 +1,5 @@
 from typing import Dict, Any, Literal, Union
+from uuid import UUID
 
 # Third-Party Dependencies
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -13,11 +14,16 @@ from app.schemas.v1.schema_restaurant import (
     RestaurantDelete,
     RestaurantCreate,
     RestaurantRead,
+    RestaurantReadOpen,
 )
 
 from app.core.http_exceptions import DuplicateValueException
 
 from app.core.hashing import Hasher
+from app.utils.paginated import (
+    paginated_response,
+    compute_offset,
+)
 
 # CRUD operations for the 'RestaurantRead' model
 CRUDRestaurantRead = CRUDBase[
@@ -62,3 +68,30 @@ async def get_restaurant(
         return None
 
     return db_restaurant
+
+async def get_restaurant_byID(
+    id: UUID, db: AsyncSession
+) -> Union[Dict[str, Any], Literal[None]]:
+    db_restaurant = await crud_restaurants.get(
+            db=db, id=id, is_deleted=False
+        )
+    if not db_restaurant:
+        return None
+
+    return db_restaurant
+
+async def get_restaurant_list(
+    db: AsyncSession,
+    page: int = 1,
+    items_per_page: int = 10,
+):
+    restaurants_data = await crud_restaurants.get_multi(
+            db=db,
+            offset=compute_offset(page, items_per_page),
+            limit=items_per_page,
+            schema_to_select=RestaurantReadOpen,
+            is_deleted=False,
+        )
+    return paginated_response(
+        crud_data=restaurants_data, page=page, items_per_page=items_per_page
+    )

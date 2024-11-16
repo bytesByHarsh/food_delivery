@@ -40,6 +40,13 @@ class RestaurantRead(
 ):
     pass
 
+class RestaurantReadOpen(
+    RestaurantRelation,
+    RestaurantInfoBase,
+    UUIDMixin,
+):
+    pass
+
 class RestaurantCreate(
     RestaurantBase,
     RestaurantLoginInfoBase,
