@@ -9,3 +9,4 @@ htmlcov
 .venv
 .env
 .ruff_cache
+node_modules
