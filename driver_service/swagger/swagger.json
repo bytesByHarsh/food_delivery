@@ -1,0 +1,939 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "User API",
+      "description": "API for managing users",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000"
+      }
+    ],
+    "tags": [
+  {
+    "name": "Users",
+    "description": "Operations related to user management"
+  },
+  {
+    "name": "Drivers",
+    "description": "Operations related to driver management"
+  },
+  {
+    "name": "Orders",
+    "description": "Operations related to order details"
+  }
+  ],
+    "paths": {
+      "/users": {
+        "get": {
+          "tags": ["Users"],
+          "summary": "Get all users",
+          "responses": {
+            "200": {
+              "description": "A list of users",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Users"],
+          "summary": "Create a new user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The newly created user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "tags": ["Users"],
+          "summary": "Get user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": ["Users"],
+          "summary": "Update user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated user",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Users"],
+          "summary": "Delete user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User deleted successfully"
+            }
+          }
+        }  
+      },
+        "/drivers/register": {
+      "post": {
+        "tags": ["Drivers"],
+        "summary": "Register a new driver",
+        "description": "Allows a superuser to register a new driver.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "adminId": {
+                    "type": "string",
+                    "description": "ID of the admin user initiating the registration",
+                    "example": "admin123"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "First name of the driver",
+                    "example": "John"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "Last name of the driver",
+                    "example": "Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Driver's email address",
+                    "example": "john.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Driver's password",
+                    "example": "securepassword123"
+                  },
+                  "age": {
+                    "type": "string",
+                    "description": "Driver's age",
+                    "example": "30"
+                  },
+                  "date_of_birth": {
+                    "type": "string",
+                    "description": "Driver's date of birth",
+                    "example": "1993-05-15"
+                  },
+                  "street": {
+                    "type": "string",
+                    "description": "Street address of the driver",
+                    "example": "123 Main St"
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "City where the driver resides",
+                    "example": "New York"
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "State where the driver resides",
+                    "example": "NY"
+                  },
+                  "zip_code": {
+                    "type": "string",
+                    "description": "Postal code of the driver's address",
+                    "example": "10001"
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country of the driver",
+                    "example": "USA"
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "description": "Driver's phone number",
+                    "example": "+1-555-555-5555"
+                  }
+                },
+                "required": ["adminId", "firstName", "lastName", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Driver registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Driver registered successfully"
+                    },
+                    "driver": {
+                      "$ref": "#/components/schemas/Driver"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Permission denied: Only superusers can register drivers."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation errors occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Validation errors occurred"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to create driver",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Failed to create driver."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drivers/list": {
+      "get": {
+        "tags": ["Drivers"],
+        "summary": "Get list of drivers",
+        "description": "Fetches a list of all registered drivers.",
+        "responses": {
+          "200": {
+            "description": "List of drivers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Driver list"
+                    },
+                    "driver": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Driver"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch driver list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Failed to fetch list."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drivers/login": {
+      "post": {
+        "tags": ["Drivers"],
+        "summary": "Driver login",
+        "description": "Allows a driver to log in using their email and password.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Driver's email address",
+                    "example": "john.doe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Driver's password",
+                    "example": "securepassword123"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token for authentication"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Driver not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Driver not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      },
+      "/create": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Create a new order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rest_id": { "type": "string" },
+                  "rest_address": { "type": "string" },
+                  "rest_location": { "type": "string" },
+                  "delivery_distance": { "type": "number" },
+                  "price": { "type": "number" },
+                  "tip": { "type": "number" },
+                  "order_id": { "type": "string" }
+                },
+                "required": ["rest_id", "rest_address", "rest_location", "price", "order_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "order": { "$ref": "#/components/schemas/Orderdetail" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/list": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Get a list of all orders",
+        "responses": {
+          "200": {
+            "description": "List of orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "driver": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Orderdetail" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/{orderId}/accept": {
+      "put": {
+        "tags": ["Orders"],
+        "summary": "Accept an order",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "ID of the order to accept"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order accepted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "order": { "$ref": "#/components/schemas/Orderdetail" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "400": {
+            "description": "Order has already been accepted"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/{orderId}/check-location": {
+      "put": {
+        "tags": ["Orders"],
+        "summary": "Check driver's location for an order",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "ID of the order"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": { "type": "number" },
+                  "long": { "type": "number" }
+                },
+                "required": ["lat", "long"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Driver is at the required location",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "order": { "$ref": "#/components/schemas/Orderdetail" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "400": {
+            "description": "Driver is not at the required location"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/{orderId}/orderstatus": {
+      "put": {
+        "tags": ["Orders"],
+        "summary": "Update order status",
+        "description": "Update the status of an order for a specific driver.",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "ID of the order to update.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Driver ID and new status for the order.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "driverId": {
+                  "type": "string",
+                  "description": "ID of the driver associated with the order."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "New status of the order.",
+                  "enum": ["delivered", "pending", "in-progress"]
+                }
+              },
+              "required": ["driverId", "status"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order status updated successfully.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "orderstatus": {
+                  "type": "object",
+                  "description": "Details of the updated order."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or missing required parameters.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "error": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "age": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+         "Driver": {
+          "type": "object",
+          "properties": {
+            "driver_id": {
+            "type": "string",
+            "description": "Unique identifier for the driver",
+            "example": "DR12345"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Driver's first name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Driver's last name",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Driver's email address",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Driver's hashed password",
+            "example": "hashedpassword123"
+          },
+          "age": {
+            "type": "string",
+            "description": "Driver's age",
+            "example": "30"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "description": "Driver's date of birth",
+            "example": "1993-05-15"
+          },
+          "street": {
+            "type": "string",
+            "description": "Street address of the driver",
+            "example": "123 Main St"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the driver resides",
+            "example": "New York"
+          },
+          "state": {
+            "type": "string",
+            "description": "State where the driver resides",
+            "example": "NY"
+          },
+          "zip_code": {
+            "type": "string",
+            "description": "Postal code of the driver's address",
+            "example": "10001"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of the driver",
+            "example": "USA"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "Driver's phone number",
+            "example": "+1-555-555-5555"
+          }
+        }
+      },
+      "Orderdetail": {
+        "type": "object",
+        "properties": {
+          "rest_id": {
+            "type": "string",
+            "description": "Restaurant ID associated with the order",
+            "example": "REST123"
+          },
+          "rest_address": {
+            "type": "string",
+            "description": "Restaurant's address",
+            "example": "123 Main St, New York, NY"
+          },
+          "rest_location": {
+            "type": "object",
+            "description": "Restaurant's location with latitude and longitude",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "format": "float",
+                "example": 40.7128
+              },
+              "longitude": {
+                "type": "number",
+                "format": "float",
+                "example": -74.0060
+              }
+            }
+          },
+          "delivery_distance": {
+            "type": "integer",
+            "description": "Distance for delivery in meters",
+            "example": 5000
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "Total price of the order",
+            "example": 25.50
+          },
+          "tip": {
+            "type": "number",
+            "format": "float",
+            "description": "Tip given for the order",
+            "example": 5.00
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Unique identifier for the order",
+            "example": "ORD12345"
+          },
+          "status": {
+            "type": "string",
+            "description": "Current status of the order",
+            "enum": [
+              "placed",
+              "ordered",
+              "accepted",
+              "on_the_way",
+              "reached",
+              "delivered",
+              "cancelled",
+              "returned",
+              "failed"
+            ],
+            "example": "placed"
+          },
+          "driver_id": {
+            "type": "integer",
+            "description": "ID of the driver assigned to the order",
+            "example": 101
+          },
+          "driverstatus": {
+            "type": "string",
+            "description": "Current status of the driver for the order",
+            "enum": [
+              "orderAssigned",
+              "Idle"
+            ],
+            "example": "orderAssigned"
+          },
+          "location": {
+            "type": "object",
+            "description": "Driver's current location with latitude and longitude",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "format": "float",
+                "example": 40.7484
+              },
+              "longitude": {
+                "type": "number",
+                "format": "float",
+                "example": -73.9857
+              }
+            }
+          },
+          "customer_location": {
+            "type": "object",
+            "description": "Customer's location with latitude and longitude",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "format": "float",
+                "example": 40.730610
+              },
+              "longitude": {
+                "type": "number",
+                "format": "float",
+                "example": -73.935242
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
