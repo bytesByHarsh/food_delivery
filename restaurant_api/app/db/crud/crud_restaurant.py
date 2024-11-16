@@ -91,6 +91,7 @@ async def get_restaurant_list(
             limit=items_per_page,
             schema_to_select=RestaurantReadOpen,
             is_deleted=False,
+            is_superuser=False
         )
     return paginated_response(
         crud_data=restaurants_data, page=page, items_per_page=items_per_page

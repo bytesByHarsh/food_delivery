@@ -134,6 +134,7 @@ class Settings(BaseSettings):
     def IMAGE_FILE_PATH(self) -> str:
         return f"{self.STATIC_FILE_FOLDER}/{self.PROFILE_IMAGE_FOLDER}"
 
+    RESTAURANT_BASE_API: str = "http://0.0.0.0:9001"
 
 unset_env()
 settings = Settings()  # type: ignore

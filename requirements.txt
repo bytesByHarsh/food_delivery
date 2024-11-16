@@ -15,6 +15,7 @@ pytest
 python-dotenv
 python-jose
 python-multipart
+requests
 SQLAlchemy
 SQLAlchemy-Utils
 sqlmodel
