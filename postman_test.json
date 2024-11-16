@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "1c402ef5-bf0d-4cf5-88cd-0fcec0bb9885",
-		"name": "API-based-Products-Assignment2",
+		"_postman_id": "b59ddee0-4518-4a6a-b7a7-6f1fb00a75ab",
+		"name": "Assignment 2 - Food Delivery APIs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38164432"
+		"_exporter_id": "37829725",
+		"_collection_link": "https://api-group-4632.postman.co/workspace/e98ab0c0-6025-4c57-8fb0-9a5919fd3807/collection/37829725-b59ddee0-4518-4a6a-b7a7-6f1fb00a75ab?action=share&source=collection_link&creator=37829725"
 	},
 	"item": [
 		{
@@ -16,7 +17,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstName\":\"harsh\",\n    \"lastName\": \"kansara\",\n    \"email\" : \"harsh@gmail.com\",\n    \"age\": \"25\",\n    \"isSuperuser\":\"1\"\n}",
+							"raw": "{\n    \"firstName\":\"harsh\",\n    \"lastName\": \"mittal\",\n    \"email\" : \"harsh@gmail.com\",\n    \"age\": \"25\",\n    \"isSuperuser\":\"1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,7 +25,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/user/create",
+							"raw": "http://localhost:3000/api/v1/users/create",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -33,7 +34,7 @@
 							"path": [
 								"api",
 								"v1",
-								"user",
+								"users",
 								"create"
 							]
 						}
@@ -319,6 +320,381 @@
 		{
 			"name": "Order",
 			"item": []
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Login",
+					"item": [
+						{
+							"name": "User Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    let responseData = pm.response.json();",
+											"",
+											"    // Ensure the access_token exists in the response",
+											"    if (responseData.access_token) {",
+											"        // Save the access_token to a global variable",
+											"        pm.globals.set(\"user_access_token\", \"Bearer \" + responseData.access_token);",
+											"        console.log(\"Access token saved as global variable.\" + pm.globals.get(\"user_access_token\"));",
+											"    } else {",
+											"        console.error(\"Access token not found in the response.\");",
+											"    }",
+											"} else {",
+											"    console.error(`Error: Response status code is ${pm.response.code}`);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "123",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{user_base_link}}/auth/login",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User Logout",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.globals.set(\"user_access_token\",\"\")"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{user_base_link}}/auth/logout",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User Details",
+					"item": [
+						{
+							"name": "Me",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user_base_link}}/users/me",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"users",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Full Details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user_base_link}}/users/me/full",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"users",
+										"me",
+										"full"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Restaurant",
+					"item": [
+						{
+							"name": "Restaurant List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    let responseData = pm.response.json();",
+											"",
+											"    // Ensure the access_token exists in the response",
+											"    if (responseData.data && Array.isArray(responseData.data) ) {",
+											"        // Save the access_token to a global variable",
+											"        responseData.data.forEach(restaurant => {",
+											"        if (restaurant.name && restaurant.name.includes(\"Dummy Restaurant 1\")) {",
+											"            pm.globals.set(\"dummy1_restaurant_id\", restaurant.id);",
+											"            console.log(pm.globals.get(\"dummy1_restaurant_id\"))",
+											"        }",
+											"    });",
+											"    } else {",
+											"        console.error(\"Invalid response: 'data' is missing or not an array.\");",
+											"    }",
+											"} else {",
+											"    console.error(`Error: Response status code is ${pm.response.code}`);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items_per_page\":10,\n    \"page\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user_base_link}}/restaurants/list",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"restaurants",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Menu",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items_per_page\":10,\n    \"page\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user_base_link}}/restaurants/menu/{{dummy1_restaurant_id}}",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"restaurants",
+										"menu",
+										"{{dummy1_restaurant_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "jwt",
+				"jwt": [
+					{
+						"key": "payload",
+						"value": "{{user_access_token}}",
+						"type": "string"
+					},
+					{
+						"key": "algorithm",
+						"value": "HS256",
+						"type": "string"
+					},
+					{
+						"key": "isSecretBase64Encoded",
+						"value": false,
+						"type": "boolean"
+					},
+					{
+						"key": "addTokenTo",
+						"value": "header",
+						"type": "string"
+					},
+					{
+						"key": "headerPrefix",
+						"value": "Bearer",
+						"type": "string"
+					},
+					{
+						"key": "queryParamKey",
+						"value": "token",
+						"type": "string"
+					},
+					{
+						"key": "header",
+						"value": "{}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "User List",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"items_per_page\":10,\n    \"page\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user_base_link}}/users/list",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"users",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search User",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"search\": \"ad\",\n    \"items_per_page\":10,\n    \"page\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user_base_link}}/users/search",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"users",
+										"search"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Restaurant",
+					"item": []
+				},
+				{
+					"name": "Driver",
+					"item": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -347,6 +723,25 @@
 		{
 			"key": "orderId",
 			"value": "'89788978-987897-987'",
+			"type": "string"
+		},
+		{
+			"key": "user_base_link",
+			"value": "http://0.0.0.0:9000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "user_access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "dummy1_restaurant_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"value": "",
 			"type": "string"
 		}
 	]
