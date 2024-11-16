@@ -11,6 +11,7 @@ from app.db.models.v1.common import Base
 from app.core.config import settings
 from app.core.hashing import Hasher
 from app.db.models.v1.db_restaurant import Restaurant
+from app.db.init_restaurant_db import create_dummy_restaurant
 
 
 async def create_first_super_user(session: AsyncSession) -> None:
@@ -56,3 +57,4 @@ async def init_db() -> None:
     await init_tables()
     async with local_session() as session:
         await create_first_super_user(session=session)
+        await create_dummy_restaurant(session=session)

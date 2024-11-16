@@ -53,7 +53,7 @@ class MenuItemUpdate(
     class Config:
         extra = "forbid"
 
-class MenuItemUpdateInternal(MenuItemUpdate):
+class MenuItemUpdateInternal(MenuItemBaseInfo):
     updated_at: datetime
 
 class MenuItemDelete(SoftDeleteMixin):
@@ -100,7 +100,7 @@ class ItemAddOnUpdate(
     class Config:
         extra = "forbid"
 
-class ItemAddOnUpdateInternal(ItemAddOnUpdate):
+class ItemAddOnUpdateInternal(ItemAddOnBaseInfo):
     updated_at: datetime
 
 class ItemAddOnDelete(SoftDeleteMixin):
