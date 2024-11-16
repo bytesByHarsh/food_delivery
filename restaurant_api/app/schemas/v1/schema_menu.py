@@ -32,7 +32,8 @@ class MenuItem(
     pass
 
 class MenuItemRead(
-    MenuItemBase
+    MenuItemBase,
+    UUIDMixin,
 ):
     pass
 
@@ -79,7 +80,8 @@ class ItemAddOn(
     pass
 
 class ItemAddOnRead(
-    ItemAddOnBase
+    ItemAddOnBase,
+    UUIDMixin,
 ):
     pass
 

@@ -21,7 +21,7 @@ from app.schemas.v1.schema_menu import (
 from app.utils.paginated import PaginatedListResponse
 from app.db.session import async_get_db
 
-from app.db.crud.crud_menu import add_item_in_menu
+from app.db.crud.crud_menu import add_item_in_menu, get_restaurant_menu
 
 router = APIRouter(tags=["Menu Management"])
 
@@ -33,3 +33,18 @@ async def create_restaurant(
     restaurant: CurrentUser,
 ):
     return await add_item_in_menu(db=db, restaurant=restaurant, menu_item=menu_item)
+
+@router.get("/{restaurant_id}")
+async def create_restaurant(
+    request: Request,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    restaurant_id:UUID,
+    page: int = 1,
+    items_per_page: int = 10,
+):
+    return await get_restaurant_menu(
+        db=db,
+        restaurant_id=restaurant_id,
+        page=page,
+        items_per_page=items_per_page
+    )

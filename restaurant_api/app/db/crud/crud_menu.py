@@ -52,3 +52,30 @@ async def add_item_in_menu(
     db: AsyncSession
 ):
     pass
+
+async def get_restaurant_menu(
+    restaurant_id: UUID,
+    db: AsyncSession,
+    page: int = 1,
+    items_per_page: int = 10,
+):
+    menu_items = await crud_menu_items.get_multi(
+        db=db,
+        offset=compute_offset(page, items_per_page),
+        limit=items_per_page,
+        schema_to_select=MenuItemRead,
+        is_deleted=False,
+    )
+    for item in menu_items["data"]:
+        add_ons = await crud_item_add_on.get_multi(
+            db=db,
+            offset=compute_offset(page, items_per_page),
+            limit=items_per_page,
+            schema_to_select=ItemAddOnRead,
+            item_id=item["id"],
+            is_deleted=False,
+        )
+        item["add_ons"] = add_ons["data"]
+    return paginated_response(
+        crud_data=menu_items, page=page, items_per_page=items_per_page
+    )
