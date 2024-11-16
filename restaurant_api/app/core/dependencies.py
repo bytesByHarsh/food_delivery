@@ -8,7 +8,7 @@ from fastapi import Depends, HTTPException, Request
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 # Local Dependencies
-# from app.db.crud.crud_user import crud_users
+from app.db.crud.crud_restaurant import crud_restaurants
 from app.core.http_exceptions import (
     UnauthorizedException,
     ForbiddenException,
@@ -44,11 +44,11 @@ async def get_current_user(
 
     # Check if the authentication token represents an email or username and retrieve the user information
     if "@" in token_data.username_or_email:
-        user: dict = await crud_users.get(
+        user: dict = await crud_restaurants.get(
             db=db, email=token_data.username_or_email, is_deleted=False
         )
     else:
-        user = await crud_users.get(
+        user = await crud_restaurants.get(
             db=db, username=token_data.username_or_email, is_deleted=False
         )
 

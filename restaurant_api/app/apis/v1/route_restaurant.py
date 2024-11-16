@@ -11,7 +11,7 @@ from sqlalchemy.sql import text
 
 # Local Dependencies
 from app.core.dependencies import CurrentUser, CurrentSuperUser
-# from app.db.crud.crud_user import crud_users, create_new_user, get_full_user_details
+from app.db.crud.crud_restaurant import create_new_restaurant, get_restaurant
 from app.db.session import async_get_db
 from app.core.http_exceptions import (
     DuplicateValueException,
@@ -19,8 +19,7 @@ from app.core.http_exceptions import (
     ForbiddenException,
     # RateLimitException
 )
-# from app.schemas.v1.schema_user import UserCreate, UserUpdate, UserRead, UserReadFull
-# from app.db.models.v1.db_user import AccessLevel_Enum
+from app.schemas.v1.schema_restaurant import RestaurantCreate, RestaurantUpdate, RestaurantRead
 
 from app.utils.paginated import (
     PaginatedListResponse,
@@ -30,4 +29,21 @@ from app.utils.paginated import (
 from app.core.security import blacklist_token, oauth2_scheme
 from app.core.config import settings
 
-router = fastapi.APIRouter(tags=["Users"])
+router = fastapi.APIRouter(tags=["User Management"])
+
+@router.post("/create")
+async def create_restaurant(
+    request: Request,
+    restaurant: RestaurantCreate,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    current_user: CurrentSuperUser,
+):
+    return await create_new_restaurant(db=db, restaurant=restaurant)
+
+@router.get("/me", response_model=RestaurantRead)
+async def create_restaurant(
+    request: Request,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    current_user: CurrentUser,
+):
+    return current_user
