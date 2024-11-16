@@ -21,11 +21,10 @@ from app.apis.base import api_router
 
 
 description = """
-Customer Microservice
+Restaurant Microservice
 ## API Supported
-- User APIs
-- Order APIs
-- User Address APIs
+- User Details
+- Basic Functionalities
 """
 
 tags_metadata = [
