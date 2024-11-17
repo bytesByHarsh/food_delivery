@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 
-//const JWT_SECRET = "your_secret_key"; // Replace with your actual secret key
+
 const JWT_SECRET = process.env.JWT_SECRET;
 console.log(JWT_SECRET)
 const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
@@ -17,10 +17,6 @@ const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
 router.post('/register', async (req, res) => {
 
     const{adminId,...data} = req.body
-  
-    // driver_id,firstName,lastName,
-    //     email, age,date_of_birth,street,city,state,zip_code,
-    //     country,phone_number
    try {
     const adminUser = await User.findByPk(adminId);
 

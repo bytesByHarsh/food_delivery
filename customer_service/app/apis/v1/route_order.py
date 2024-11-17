@@ -30,7 +30,7 @@ from app.core.config import settings
 router = fastapi.APIRouter(tags=["Orders"])
 
 
-@router.post("", response_model=OrderRead, status_code=201)
+@router.post("/create", response_model=OrderRead, status_code=201)
 async def create_order(
     request: Request,
     order: OrderCreate,
@@ -68,6 +68,16 @@ async def order_list(
         db=db, items_per_page=items_per_page, page=page, user=current_user
     )
 
+@router.put("/assign/{order_id}")
+async def create_order(
+    request: Request,
+    order_id: UUID,
+    driver_details:OrderUpdateDriverDetails,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+):
+    await update_driver(db=db, driver_details=driver_details, order_id=order_id)
+    return {"status":"Driver Assigned"}
+
 
 @router.get("/{order_id}", response_model=OrderRead)
 async def get_order(
@@ -99,11 +109,3 @@ async def update_status(
         return {"status": "Updated"}
     return {"status": "Not Updated, Check value sent"}
 
-@router.post("/{order_id}/assign", response_model=OrderRead, status_code=200)
-async def create_order(
-    request: Request,
-    order_id: UUID,
-    driver_details:OrderUpdateDriverDetails,
-    db: Annotated[AsyncSession, Depends(async_get_db)],
-) -> Any:
-    return await update_driver(db=db, driver_details=driver_details, order_id=order_id)

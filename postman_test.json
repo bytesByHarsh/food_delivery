@@ -11,154 +11,150 @@
 			"name": "Delivery",
 			"item": [
 				{
-					"name": "CreateUser",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"firstName\":\"harsh\",\n    \"lastName\": \"mittal\",\n    \"email\" : \"harsh@gmail.com\",\n    \"age\": \"25\",\n    \"isSuperuser\":\"1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "Order",
+					"item": [
+						{
+							"name": "Update Status",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{user_base_link}}/orders/{{order_uuid}}?status=delivered&driver_id={{driver_id}}",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"orders",
+										"{{order_uuid}}"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "delivered"
+										},
+										{
+											"key": "driver_id",
+											"value": "{{driver_id}}"
+										}
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "http://localhost:3000/api/v1/users/create",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"users",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UsersList",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/v1/users/list",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"users",
-								"list"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DriverRegister",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"adminId\":\"1\",  \n  \"driver_id\":\"0000003\",          \n  \"firstName\": \"vipul\",             \n  \"lastName\": \"sharma\",              \n  \"email\": \"vipul@gmail.com\",\n  \"password\":\"1234#$\",\n  \"age\":\"27\",                              \n  \"date_of_birth\": \"1997-05-17\",             \n  \"street\": \"120 Main St\",                \n  \"city\": \"Los Angeles\",                  \n  \"state\": \"CA\",                 \n  \"zip_code\": \"90006\",              \n  \"country\": \"USA\",\n  \"phone_number\":\"+914563388877\"\n                 \n  \n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "Order List",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{driver_base_link}}/orders/list",
+									"host": [
+										"{{driver_base_link}}"
+									],
+									"path": [
+										"orders",
+										"list"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "http://localhost:3000/api/v1/driver/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"driver",
-								"register"
-							]
+						{
+							"name": "Accept Order",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"driverId\": {{driver_id}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{driver_base_link}}/orders/{{order_uuid}}/accept",
+									"host": [
+										"{{driver_base_link}}"
+									],
+									"path": [
+										"orders",
+										"{{order_uuid}}",
+										"accept"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "DriverLogin",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+					"name": "Login",
+					"item": [
+						{
+							"name": "Driver Login",
+							"event": [
 								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJkZW1vQGdtYWlsLmNvbSIsImlhdCI6MTczMTU4Mzc1MiwiZXhwIjoxNzMxNTg3MzUyfQ.BV8VlSk0MfHX9HVfl2nZCrykYcYMz4aopdO052YvDlw",
-									"type": "string"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    let responseData = pm.response.json();",
+											"",
+											"    // Ensure the access_token exists in the response",
+											"    if (responseData.token) {",
+											"        // Save the access_token to a global variable",
+											"        pm.globals.set(\"driver_access_token\", responseData.token);",
+											"        console.log(\"Access token saved as global variable.\" + pm.globals.get(\"driver_access_token\"));",
+											"    } else {",
+											"        console.error(\"Access token not found in the response.\");",
+											"    }",
+											"} else {",
+											"    console.error(`Error: Response status code is ${pm.response.code}`);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"demo@gmail.com\",\n  \"password\": \"1234\"\n}  ",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/v1/driver/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
 							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"driver",
-								"login"
-							]
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"vipul@gmail.com\",\n  \"password\": \"1234#$\"\n}  ",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{driver_base_link}}/driver/login",
+									"host": [
+										"{{driver_base_link}}"
+									],
+									"path": [
+										"driver",
+										"login"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "Driverlist",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/v1/driver/list",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"driver",
-								"list"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "NewDriverForOrder",
+					"name": "Request Driver",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -195,89 +191,8 @@
 					"response": []
 				},
 				{
-					"name": "OrderListForDrivers",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/v1/orders/list",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"orders",
-								"list"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DriverAcceptOrder",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJkZW1vQGdtYWlsLmNvbSIsImlhdCI6MTczMTczOTk1NSwiZXhwIjoxNzMxNzQzNTU1fQ.Rs20NZzxbiwdO97FMIl5NfxbxEaxBfWluiSGDUYcxXM",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{  \n    \"driverId\": 4\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/api/v1/orders/89788978-987897-987/accept",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"orders",
-								"89788978-987897-987",
-								"accept"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "DriverStatusForOrder",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJkZW1vQGdtYWlsLmNvbSIsImlhdCI6MTczMTc0NjkwMSwiZXhwIjoxNzMxNzUwNTAxfQ.Ifo65UEXMrWvIDETKUWKv0M2IhwEI5djKjukA1cDZUE",
-									"type": "string"
-								}
-							]
-						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -290,22 +205,50 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/orders/89788978-987897-987/orderstatus",
-							"protocol": "http",
+							"raw": "{{driver_base_link}}/orders/{{order_uuid}}/orderstatus",
 							"host": [
-								"localhost"
+								"{{driver_base_link}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"orders",
-								"89788978-987897-987",
+								"{{order_uuid}}",
 								"orderstatus"
 							]
 						}
 					},
 					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{driver_access_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -359,14 +302,6 @@
 								"{{order_uuid}}"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "RestaurantLogin",
-					"request": {
-						"method": "GET",
-						"header": []
 					},
 					"response": []
 				}
@@ -719,12 +654,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{user_base_link}}/orders",
+									"raw": "{{user_base_link}}/orders/create",
 									"host": [
 										"{{user_base_link}}"
 									],
 									"path": [
-										"orders"
+										"orders",
+										"create"
 									]
 								}
 							},
@@ -924,11 +860,155 @@
 				},
 				{
 					"name": "Restaurant",
-					"item": []
+					"item": [
+						{
+							"name": "Create Restaurant",
+							"request": {
+								"method": "POST",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Restaurant List",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Restaurant",
+							"request": {
+								"method": "DELETE",
+								"header": []
+							},
+							"response": []
+						}
+					]
 				},
 				{
 					"name": "Driver",
-					"item": []
+					"item": [
+						{
+							"name": "Create Driver",
+							"request": {
+								"method": "POST",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Driver",
+							"request": {
+								"method": "DELETE",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "Driver List",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{driver_base_link}}/driver/list",
+									"host": [
+										"{{driver_base_link}}"
+									],
+									"path": [
+										"driver",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateUser",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\":\"harsh\",\n    \"lastName\": \"mittal\",\n    \"email\" : \"harsh@gmail.com\",\n    \"age\": \"25\",\n    \"isSuperuser\":\"1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UsersList",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Driver Register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"adminId\":\"1\",  \n  \"driver_id\":\"0000003\",          \n  \"firstName\": \"vipul\",             \n  \"lastName\": \"sharma\",              \n  \"email\": \"vipul@gmail.com\",\n  \"password\":\"1234#$\",\n  \"age\":\"27\",                              \n  \"date_of_birth\": \"1997-05-17\",             \n  \"street\": \"120 Main St\",                \n  \"city\": \"Los Angeles\",                  \n  \"state\": \"CA\",                 \n  \"zip_code\": \"90006\",              \n  \"country\": \"USA\",\n  \"phone_number\":\"+914563388877\"\n                 \n  \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/driver/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"driver",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
@@ -974,6 +1054,11 @@
 		{
 			"key": "driver_base_link",
 			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "driver_id",
+			"value": "1",
 			"type": "string"
 		}
 	]

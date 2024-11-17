@@ -1,9 +1,10 @@
 const express = require('express');
-//const Order = require('../models/accept_order');
-const authenticate = require('../middleware/authenticate'); // Middleware to check if the driver is logged in
+const authenticate = require('../middleware/authenticate');
 const Orderdetail = require('../models/Orderdetail');
+const driver = require('../models/driver')
+const axios = require('axios');
 const router = express.Router();
-//const DriverAssign = require('../models/assign_driver');
+
 
 
 // POST /api/orders - Create a new order
@@ -43,12 +44,12 @@ router.get('/list', async (req, res) => {
       return res.status(200).json({ message:'Order list', driver});
     } catch (error) {
       console.error('Error registering driver:', error);
-  
+
       if (error.name === 'SequelizeValidationError') {
         const validationErrors = error.errors.map(err => err.message);
         return res.status(400).json({ message: 'Validation errors occurred', errors: validationErrors });
       }
-  
+
       res.status(500).json({ message: 'failed to fetch list.' });
     }
   });
@@ -56,7 +57,7 @@ router.get('/list', async (req, res) => {
 // PUT /api/orders/:orderId/accept - Accept an order
 router.put('/:orderId/accept', authenticate, async (req, res) => {
   const { orderId } = req.params;
-  const {driverId} = req.body; 
+  const {driverId} = req.body;
 
   try {
     // Find the order by ID
@@ -65,24 +66,38 @@ router.put('/:orderId/accept', authenticate, async (req, res) => {
         order_id: orderId, // Column name should match the field in your database schema
       },
     }
-    ); 
+    );
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    
 
-    // Check if the order is already accepted or completed
-    if (order.status == 'accepted') {
-      return res.status(400).json({ message: 'Order has already been accepted' });
-    }
+
+    // // Check if the order is already accepted or completed
+    // if (order.status == 'accepted') {
+    //   return res.status(400).json({ message: 'Order has already been accepted' });
+    // }
 
     // Update order status to "accepted" and assign the driver
     order.status = 'accepted';
     order.driver_id = driverId;
     order.driverstatus = 'orderAssigned';
     await order.save();
+
+
+    const Driver = await driver.findOne({
+      where: {
+        id: driverId, // Column name should match the field in your database schema
+      },
+    });
+    const externalApiUrl = 'http://0.0.0.0:9000/api/v1/orders/assign/' + orderId; // Replace with actual URL
+    const bodyData = {
+      "delivery_person_id": driverId,
+      "delivery_person_name": Driver.firstName,
+    };
+
+    await axios.put(externalApiUrl, bodyData);
 
     res.status(200).json({
       message: 'Order accepted successfully',
@@ -110,36 +125,36 @@ const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
     const { orderId } = req.params;
     const { lat, long } = req.body; // Driver's current location
     const driverId = req.driverId; // Set in authenticate middleware
-  
+
     try {
       // Find the order by ID
       const order = await Orderdetail.findOne({
         where: {
           order_id: orderId, // Column name should match the field in your database schema
         },
-      }); 
+      });
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
-  
+
       // Check if the order is already received
       if (order.status === "received") {
         return res.status(400).json({ message: 'Order has already been received by a driver' });
       }
-  
+
       // Calculate the distance between driver location and order location
       const distance = getDistanceFromLatLonInKm(lat, long, order.location.lat, order.location.long);
       const maxDistance = 5; // Acceptable distance in km (e.g., within 500 meters)
-  
+
       if (distance > maxDistance) {
         return res.status(400).json({ message: 'Driver is not at the required location' });
       }
-  
+
       // Update order status and assign driver
       order.status = 'received';
       order.driver_id = driverId;
       await order.save();
-  
+
       res.status(200).json({
         message: 'Order received by driver',
         order,
@@ -150,61 +165,17 @@ const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
     }
   });
 
-  // PUT /api/orders/:orderId/deliver - Check if driver is at customer location and deliver order
-// router.put('/:orderId/deliver', authenticate, async (req, res) => {
-//     const { orderId } = req.params;
-//     const { lat, long } = req.body; // Driver's current location
-//     const driverId = req.driverId; // Set in authenticate middleware
-  
-//     try {
-//       // Find the order by ID
-//       const order = await Order.findByPk(orderId);
-//       if (!order) {
-//         return res.status(404).json({ message: 'Order not found' });
-//       }
-  
-//       // Verify the order is assigned to this driver and is not already delivered
-//       if (order.driver_id !== driverId) {
-//         return res.status(403).json({ message: 'Unauthorized: This order is not assigned to you' });
-//       }
-//       if (order.status === 'delivered') {
-//         return res.status(400).json({ message: 'Order has already been delivered' });
-//       }
-  
-//       // Calculate distance between driver's current location and customer location
-//       const distance = getDistanceFromLatLonInKm(lat, long, order.customer_location.lat, order.customer_location.long);
-//       const maxDistance = 0.5; // Acceptable distance in km (e.g., within 500 meters)
-  
-//       if (distance > maxDistance) {
-//         return res.status(400).json({ message: 'Driver is not at the customer location' });
-//       }
-  
-//       // Update order status to "delivered"
-//       order.status = 'delivered';
-//       DriverAssign.assign = 0;
-//       await order.save();
-  
-//       res.status(200).json({
-//         message: 'Order successfully delivered',
-//         order,
-//       });
-//     } catch (error) {
-//       console.error('Error delivering order:', error);
-//       res.status(500).json({ message: 'Internal server error' });
-//     }
-//   });
-
   router.put('/:orderId/orderstatus', authenticate, async (req, res) => {
     const { orderId } = req.params;
     const {driverId,status} = req.body;
     console.log(driverId)
     console.log(status)
-    //const status = req.status 
+    //const status = req.status
     try {
       // Update the status where both order_id and driver_id match
       const orderstatus = await Orderdetail.findOne(
          // Fields to update
-        { 
+        {
           where: {
             order_id: orderId, // Match the order ID
             driver_id: driverId, // Match the driver ID
@@ -221,12 +192,12 @@ const getDistanceFromLatLonInKm = (lat1, lon1, lat2, lon2) => {
         message: '`Order ID ${orderId} status updated successfully!`',
         orderstatus,
       });
-    
+
     } catch (error) {
       console.error('Error updating order status:', error.message);
     }
   });
 
-    
+
 
 module.exports = router;

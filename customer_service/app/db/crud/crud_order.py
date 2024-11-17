@@ -173,7 +173,7 @@ async def update_order_status(
 
     if driver_id is not None:
         check_fag = True
-        if order_db["driver_id"] != driver_id:
+        if order_db["delivery_person_id"] != int(driver_id):
             raise ForbiddenException("Different Driver Trying to update order status")
     if check_fag is False:
         raise ForbiddenException("Wrong Params Entered")

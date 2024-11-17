@@ -189,4 +189,5 @@ class OrderRestoreDeleted(BaseModel):
 
 
 class OrderUpdateDriverDetails(OrderBaseDeliveryBaseInfo):
-    model_config = ConfigDict(extra="forbid")  # type: ignore
+    # model_config = ConfigDict(extra="forbid")  # type: ignore
+    pass
