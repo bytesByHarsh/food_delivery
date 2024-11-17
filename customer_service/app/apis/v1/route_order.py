@@ -1,6 +1,8 @@
 # Built-in Dependencies
 from typing import Annotated, Any
 from uuid import UUID
+import requests
+
 
 # Third-Party Dependencies
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -23,6 +25,7 @@ from app.db.models.v1.db_order import Order_Status_Enum
 from app.utils.paginated import (
     PaginatedListResponse,
 )
+from app.core.config import settings
 
 router = fastapi.APIRouter(tags=["Orders"])
 
@@ -34,7 +37,23 @@ async def create_order(
     db: Annotated[AsyncSession, Depends(async_get_db)],
     current_user: CurrentUser,
 ) -> Any:
-    return await add_new_order(user=current_user, order=order, db=db)
+    order = await add_new_order(user=current_user, order=order, db=db)
+    ## Ask for driver
+    url = f"{settings.DRIVER_BASE_API}/orders/create"
+    query_params = {
+        "rest_id":str(order.restaurant_id),
+        "rest_address": "Dummy Address 1",
+        "rest_location":{
+            "lat":75.654,
+            "long":84.564
+        },
+        "delivery_distance": 88,
+        "price":int(order.total_cost),
+        "tip":0,
+        "order_id":str(order.id)
+    }
+    response = requests.post(url, json=query_params)
+    return order
 
 
 @router.get("/list", response_model=PaginatedListResponse[OrderRead])
@@ -57,7 +76,7 @@ async def get_order(
     return await get_order_details(db=db, order_id=order_id)
 
 
-@router.put("{order_id}", status_code=200)
+@router.put("/{order_id}", status_code=200)
 async def update_status(
     request: Request,
     order_id: UUID,

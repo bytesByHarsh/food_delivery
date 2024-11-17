@@ -182,15 +182,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/v1/orders/create",
-							"protocol": "http",
+							"raw": "{{driver_base_link}}/orders/create",
 							"host": [
-								"localhost"
+								"{{driver_base_link}}"
 							],
-							"port": "3000",
 							"path": [
-								"api",
-								"v1",
 								"orders",
 								"create"
 							]
@@ -315,11 +311,66 @@
 		},
 		{
 			"name": "Restaurant",
-			"item": []
-		},
-		{
-			"name": "Order",
-			"item": []
+			"item": [
+				{
+					"name": "Menu Management",
+					"item": []
+				},
+				{
+					"name": "Update Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{user_base_link}}/orders/{{order_uuid}}?status=accepted&restaurant_id={{dummy1_restaurant_id}}",
+							"host": [
+								"{{user_base_link}}"
+							],
+							"path": [
+								"orders",
+								"{{order_uuid}}"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "accepted"
+								},
+								{
+									"key": "restaurant_id",
+									"value": "{{dummy1_restaurant_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user_base_link}}/orders/{{order_uuid}}",
+							"host": [
+								"{{user_base_link}}"
+							],
+							"path": [
+								"orders",
+								"{{order_uuid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RestaurantLogin",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "User",
@@ -422,6 +473,31 @@
 					"item": [
 						{
 							"name": "Me",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    let responseData = pm.response.json();",
+											"",
+											"    // Ensure the access_token exists in the response",
+											"    if (responseData.id) {",
+											"        // Save the access_token to a global variable",
+											"        pm.globals.set(\"user_uuid\", responseData.id);",
+											"        console.log(\"User UUID saved as global variable: \" + pm.globals.get(\"user_uuid\"));",
+											"    } else {",
+											"        console.error(\"User UUID not found in the response.\");",
+											"    }",
+											"} else {",
+											"    console.error(`Error: Response status code is ${pm.response.code}`);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -452,6 +528,52 @@
 										"users",
 										"me",
 										"full"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Address List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    let responseData = pm.response.json();",
+											"",
+											"    // Ensure the access_token exists in the response",
+											"    if (responseData.data && Array.isArray(responseData.data) ) {",
+											"        // Save the access_token to a global variable",
+											"        responseData.data.forEach(address => {",
+											"        if (address.id) {",
+											"            pm.globals.set(\"user_address_uuid\", address.id);",
+											"            console.log(pm.globals.get(\"user_address_uuid\"))",
+											"        }",
+											"    });",
+											"    } else {",
+											"        console.error(\"Invalid response: 'data' is missing or not an array.\");",
+											"    }",
+											"} else {",
+											"    console.error(`Error: Response status code is ${pm.response.code}`);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user_base_link}}/user_address",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"user_address"
 									]
 								}
 							},
@@ -551,6 +673,120 @@
 								}
 							},
 							"response": []
+						}
+					]
+				},
+				{
+					"name": "Order",
+					"item": [
+						{
+							"name": "Create Order",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    let responseData = pm.response.json();",
+											"",
+											"    // Ensure the access_token exists in the response",
+											"    if (responseData.id) {",
+											"        // Save the access_token to a global variable",
+											"        pm.globals.set(\"order_uuid\", responseData.id);",
+											"        console.log(\"Order UUID saved as global variable: \" + pm.globals.get(\"order_uuid\"));",
+											"    } else {",
+											"        console.error(\"Order UUID not found in the response.\");",
+											"    }",
+											"} else {",
+											"    console.error(`Error: Response status code is ${pm.response.code}`);",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"customer_id\": \"{{user_uuid}}\",\n  \"address_id\": \"{{user_address_uuid}}\",\n  \"restaurant_id\": \"{{dummy1_restaurant_id}}\",\n  \"total_cost\": 0,\n  \"items\": [\n    {\n        \"product_id\":\"fa6faf46-881a-41c5-ad84-ebdcad463189\",\n        \"name\": \"Item 1\",\n        \"price_per_unit\": 339.76,\n        \"quantity\":1,\n        \"add_ons\":[\n            {\n                \"name\":\"Add On 1\", \n                \"price\":45.57\n            }\n        ]\n    },\n    {\n        \"product_id\":\"5a001e27-77f0-48c8-9474-47934974bda0\",\n        \"name\": \"Item 2\",\n        \"price_per_unit\": 376.62,\n        \"quantity\":3\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{user_base_link}}/orders",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order Status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user_base_link}}/orders/{{order_uuid}}",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"orders",
+										"{{order_uuid}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order List",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{user_base_link}}/orders/list",
+									"host": [
+										"{{user_base_link}}"
+									],
+									"path": [
+										"orders",
+										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				}
@@ -736,12 +972,8 @@
 			"type": "string"
 		},
 		{
-			"key": "dummy1_restaurant_id",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"value": "",
+			"key": "driver_base_link",
+			"value": "http://localhost:3000/api/v1",
 			"type": "string"
 		}
 	]
