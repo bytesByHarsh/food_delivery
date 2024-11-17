@@ -17,6 +17,7 @@ from app.db.crud.crud_order import (
     get_order_details,
     get_order_list,
     update_driver,
+    get_restaurant_order_list
 )
 from app.db.session import async_get_db
 from app.schemas.v1.schema_order import OrderCreate, OrderRead, OrderUpdateDriverDetails
@@ -109,3 +110,15 @@ async def update_status(
         return {"status": "Updated"}
     return {"status": "Not Updated, Check value sent"}
 
+@router.get("/restaurant/list", response_model=PaginatedListResponse[OrderRead])
+async def order_list(
+    request: Request,
+    db: Annotated[AsyncSession, Depends(async_get_db)],
+    restaurant_id:str,
+    status:Order_Status_Enum,
+    page: int = 1,
+    items_per_page: int = 10,
+):
+    return await get_restaurant_order_list(
+        db=db, items_per_page=items_per_page, page=page, restaurant_id=restaurant_id, status=status
+    )

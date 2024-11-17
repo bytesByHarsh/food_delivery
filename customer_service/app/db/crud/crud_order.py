@@ -148,6 +148,26 @@ async def get_order_list(
         crud_data=order_data, page=page, items_per_page=items_per_page
     )
 
+async def get_restaurant_order_list(
+    restaurant_id:str,
+    status:Order_Status_Enum,
+    db: AsyncSession,
+    page: int = 1,
+    items_per_page: int = 10,
+):
+    order_data = await crud_order.get_multi(
+        db=db,
+        offset=compute_offset(page, items_per_page),
+        limit=items_per_page,
+        schema_to_select=OrderRead,
+        is_deleted=False,
+        restaurant_id=restaurant_id,
+        status=status
+    )
+    return paginated_response(
+        crud_data=order_data, page=page, items_per_page=items_per_page
+    )
+
 
 async def update_order_status(
     order_id: UUID,
