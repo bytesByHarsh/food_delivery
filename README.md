@@ -70,3 +70,4 @@ node src/index.js
 - FastAPI
 - PostgreSQL
 
+![ERD Diagram for User and Order Management](./docs/erd_user_management.png)
