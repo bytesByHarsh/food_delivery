@@ -1,0 +1,28 @@
+definitions:
+  models.JSONResp:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: harshmittal2210@gmail.com
+    name: Harsh Mittal
+paths:
+  /:
+    get:
+      description: get string by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResp'
+      summary: Hello API
+      tags:
+      - Ping
+swagger: "2.0"
