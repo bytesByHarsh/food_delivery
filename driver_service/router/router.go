@@ -18,9 +18,9 @@ func SetupRoutes(app *chi.Mux) {
 
 	driverRouter.Get("/me", handler.MiddlewareAuth(handler.GetDriver))
 	driverRouter.Put("/me/password", handler.MiddlewareAuth(handler.UpdateDriverPassword))
-	driverRouter.Get("/{username}", handler.MiddlewareAuth(handler.GetAnotherDriver))
-	driverRouter.Delete("/{id}", handler.MiddlewareAuth(handler.DbDeleteUser))
-	driverRouter.Get("/list", handler.MiddlewareAuth(handler.GetUserList))
+	driverRouter.Get("/{id}", handler.MiddlewareAuth(handler.GetAnotherDriver))
+	driverRouter.Delete("/{id}", handler.MiddlewareAuth(handler.DbDeleteDriver))
+	driverRouter.Get("/list", handler.MiddlewareAuth(handler.GetDriverList))
 
 	v1Router.Mount("/drivers", driverRouter)
 	app.Mount("/v1", v1Router)

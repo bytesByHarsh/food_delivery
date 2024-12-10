@@ -71,10 +71,31 @@ func CreateDriver(w http.ResponseWriter, r *http.Request, driver database.Driver
 	responseWithJson(w, http.StatusCreated, resp)
 }
 
+// GetDriver godoc
+//
+//	@Summary		Get Driver
+//	@Description	get driver details
+//	@Tags			Drivers
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	models.Driver
+//	@Failure		400	{object}	models.JSONerrResponse
+//	@Router			/drivers/me [get]
 func GetDriver(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	responseWithJson(w, http.StatusOK, models.ConvDriverToDriver(driver))
 }
 
+// GetAnotherDriver godoc
+//
+//	@Summary		Get Another Driver
+//	@Description	get another driver details
+//	@Tags			Drivers
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"id"
+//	@Success		200	{object}	models.Driver
+//	@Failure		400	{object}	models.JSONerrResponse
+//	@Router			/drivers/{id} [get]
 func GetAnotherDriver(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	id := chi.URLParam(r, "id")
 
@@ -97,7 +118,19 @@ func GetAnotherDriver(w http.ResponseWriter, r *http.Request, driver database.Dr
 	responseWithJson(w, http.StatusOK, models.ConvDriverToDriver(driverDb))
 }
 
-func GetUserList(w http.ResponseWriter, r *http.Request, driver database.Driver) {
+// GetDriverList godoc
+//
+//	@Summary		Get Driver List
+//	@Description	driver list
+//	@Tags			Drivers
+//	@Accept			json
+//	@Produce		json
+//	@Param			page			query		int32	true	"Page Number"
+//	@Param			items_per_page	query		int32	true	"Items Per Page"
+//	@Success		200				{object}	models.PaginatedListResp[models.Driver]
+//	@Failure		400				{object}	models.JSONerrResponse
+//	@Router			/drivers/list [get]
+func GetDriverList(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	if !driver.IsSuperuser {
 		responseWithError(w, http.StatusUnauthorized,
 			"Access Denied",
@@ -143,6 +176,17 @@ func GetUserList(w http.ResponseWriter, r *http.Request, driver database.Driver)
 	responseWithJson(w, http.StatusOK, resp)
 }
 
+// UpdateDriverPassword godoc
+//
+//	@Summary		Update Driver Password
+//	@Description	update driver password
+//	@Tags			Drivers
+//	@Accept			json
+//	@Produce		json
+//	@Param			password	body		models.UpdatePasswordReq	true	"Password Body"
+//	@Success		202			{object}	models.JSONerrResponse
+//	@Failure		400			{object}	models.JSONerrResponse
+//	@Router			/drivers/me/password [put]
 func UpdateDriverPassword(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	params := models.UpdatePasswordReq{}
 
@@ -161,7 +205,7 @@ func UpdateDriverPassword(w http.ResponseWriter, r *http.Request, driver databas
 	})
 
 	if err != nil {
-		responseWithError(w, 400,
+		responseWithError(w, http.StatusBadRequest,
 			fmt.Sprintf("couldn't update driver password: %v", err),
 		)
 		return
@@ -175,7 +219,18 @@ func UpdateDriverPassword(w http.ResponseWriter, r *http.Request, driver databas
 	responseWithJson(w, http.StatusAccepted, resp)
 }
 
-func DbDeleteUser(w http.ResponseWriter, r *http.Request, driver database.Driver) {
+// DbDeleteDriver godoc
+//
+//	@Summary		Delete driver from DB
+//	@Description	delete driver from db by admin
+//	@Tags			Drivers
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"id"
+//	@Success		201	{object}	models.JSONerrResponse
+//	@Failure		400	{object}	models.JSONerrResponse
+//	@Router			/drivers/{id} [delete]
+func DbDeleteDriver(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	if !driver.IsSuperuser {
 		responseWithError(w, http.StatusUnauthorized,
 			"Proper Authentication Required",
@@ -197,7 +252,7 @@ func DbDeleteUser(w http.ResponseWriter, r *http.Request, driver database.Driver
 	err = apiCfg.DB.HardDeleteUser(r.Context(), uId)
 
 	if err != nil {
-		responseWithError(w, 400,
+		responseWithError(w, http.StatusBadRequest,
 			fmt.Sprintf("couldn't permanently delete driver: %v", err),
 		)
 		return

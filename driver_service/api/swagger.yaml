@@ -1,4 +1,19 @@
 definitions:
+  github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Driver'
+        type: array
+      has_more:
+        type: boolean
+      items_per_page:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
   models.AuthReq:
     properties:
       password:
@@ -14,6 +29,53 @@ definitions:
       access_token:
         type: string
     type: object
+  models.CreateDriverByAdminReq:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone_num:
+        type: string
+      username:
+        type: string
+    required:
+    - age
+    - email
+    - name
+    - password
+    - phone_num
+    - username
+    type: object
+  models.Driver:
+    properties:
+      age:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      is_superuser:
+        type: boolean
+      name:
+        type: string
+      phone_number:
+        type: string
+      profile_img:
+        type: string
+      role:
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
   models.JSONResp:
     properties:
       data: {}
@@ -26,6 +88,13 @@ definitions:
     properties:
       error:
         type: string
+    type: object
+  models.UpdatePasswordReq:
+    properties:
+      password:
+        type: string
+    required:
+    - password
     type: object
 info:
   contact:
@@ -45,6 +114,36 @@ paths:
       summary: Hello API
       tags:
       - Ping
+  /drivers/list:
+    get:
+      consumes:
+      - application/json
+      description: driver list
+      parameters:
+      - description: Page Number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Items Per Page
+        in: query
+        name: items_per_page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Driver List
+      tags:
+      - Drivers
   /drivers/login:
     post:
       consumes:
@@ -71,4 +170,124 @@ paths:
       summary: Login Driver
       tags:
       - Authentication
+  /drivers/me:
+    get:
+      consumes:
+      - application/json
+      description: get driver details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Driver
+      tags:
+      - Drivers
+  /drivers/register:
+    post:
+      consumes:
+      - application/json
+      description: create new driver
+      parameters:
+      - description: Driver Body
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateDriverByAdminReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Create Driver
+      tags:
+      - Drivers
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete driver from db by admin
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Delete driver from DB
+      tags:
+      - Drivers
+    get:
+      consumes:
+      - application/json
+      description: get another driver details
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Another Driver
+      tags:
+      - Drivers
+  /users/me/password:
+    put:
+      consumes:
+      - application/json
+      description: update driver password
+      parameters:
+      - description: Password Body
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePasswordReq'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Update Driver Password
+      tags:
+      - Drivers
 swagger: "2.0"

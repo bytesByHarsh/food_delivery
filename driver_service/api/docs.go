@@ -38,6 +38,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/drivers/list": {
+            "get": {
+                "description": "driver list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Get Driver List",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page Number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items Per Page",
+                        "name": "items_per_page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/drivers/login": {
             "post": {
                 "description": "get login token",
@@ -77,9 +122,215 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/drivers/me": {
+            "get": {
+                "description": "get driver details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Get Driver",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Driver"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/drivers/register": {
+            "post": {
+                "description": "create new driver",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Create Driver",
+                "parameters": [
+                    {
+                        "description": "Driver Body",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateDriverByAdminReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Driver"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me/password": {
+            "put": {
+                "description": "update driver password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Update Driver Password",
+                "parameters": [
+                    {
+                        "description": "Password Body",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatePasswordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "get another driver details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Get Another Driver",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Driver"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete driver from db by admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Delete driver from DB",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Driver"
+                    }
+                },
+                "has_more": {
+                    "type": "boolean"
+                },
+                "items_per_page": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.AuthReq": {
             "type": "object",
             "required": [
@@ -103,6 +354,75 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CreateDriverByAdminReq": {
+            "type": "object",
+            "required": [
+                "age",
+                "email",
+                "name",
+                "password",
+                "phone_num",
+                "username"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone_num": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Driver": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_superuser": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "profile_img": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "models.JSONResp": {
             "type": "object",
             "properties": {
@@ -119,6 +439,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdatePasswordReq": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
                     "type": "string"
                 }
             }
