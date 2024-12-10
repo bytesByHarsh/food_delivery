@@ -21,4 +21,4 @@ swag init -o './api' -g './cmd/main.go' --parseDependency
 swag fmt
 ```
 
-> Visit: `http://0.0.0.0:3000/swagger`
+> Visit: `http://0.0.0.0:3000/swagger/index.html`

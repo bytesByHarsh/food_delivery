@@ -1,10 +1,30 @@
 definitions:
+  models.AuthReq:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  models.AuthResp:
+    properties:
+      access_token:
+        type: string
+    type: object
   models.JSONResp:
     properties:
       data: {}
       message:
         type: string
       status:
+        type: string
+    type: object
+  models.JSONerrResponse:
+    properties:
+      error:
         type: string
     type: object
 info:
@@ -25,4 +45,30 @@ paths:
       summary: Hello API
       tags:
       - Ping
+  /drivers/login:
+    post:
+      consumes:
+      - application/json
+      description: get login token
+      parameters:
+      - description: Login Body
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AuthResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Login Driver
+      tags:
+      - Authentication
 swagger: "2.0"

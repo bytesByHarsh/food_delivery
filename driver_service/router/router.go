@@ -14,6 +14,8 @@ func SetupRoutes(app *chi.Mux) {
 	// Driver
 	driverRouter := chi.NewRouter()
 	driverRouter.Post("/register", handler.MiddlewareAuth(handler.CreateDriver))
+	driverRouter.Post("/login", handler.LoginDriver)
+
 	driverRouter.Get("/me", handler.MiddlewareAuth(handler.GetDriver))
 	driverRouter.Put("/me/password", handler.MiddlewareAuth(handler.UpdateDriverPassword))
 	driverRouter.Get("/{username}", handler.MiddlewareAuth(handler.GetAnotherDriver))

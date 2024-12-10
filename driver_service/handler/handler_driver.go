@@ -15,6 +15,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreateDriver godoc
+//
+//	@Summary		Create Driver
+//	@Description	create new driver
+//	@Tags			Drivers
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		models.CreateDriverByAdminReq	true	"Driver Body"
+//	@Success		201		{object}	models.Driver
+//	@Failure		400		{object}	models.JSONerrResponse
+//	@Router			/drivers/register [post]
 func CreateDriver(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 
 	params := models.CreateDriverByAdminReq{}
