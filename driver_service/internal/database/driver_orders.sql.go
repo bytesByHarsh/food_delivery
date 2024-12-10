@@ -42,7 +42,7 @@ type CreateOrderParams struct {
 	CustomerPhone    string
 	CustomerLat      string
 	CustomerLong     string
-	Status           NullOrderStatus
+	Status           OrderStatus
 	DeliveryDistance float64
 	Earning          float64
 	Tip              int32
@@ -416,7 +416,7 @@ RETURNING id, driver_id, order_id, restaurant_id, restaurant_name, restaurant_ad
 
 type UpdateOrderStatusParams struct {
 	ID        uuid.UUID
-	Status    NullOrderStatus
+	Status    OrderStatus
 	UpdatedAt time.Time
 }
 

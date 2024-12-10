@@ -25,7 +25,7 @@ CREATE TABLE driver_orders (
     customer_lat        DECIMAL(9, 6) NOT NULL,
     customer_long       DECIMAL(9, 6) NOT NULL,
 
-    status              order_status DEFAULT 'unassigned',
+    status              order_status NOT NULL DEFAULT 'unassigned',
     delivery_distance   FLOAT NOT NULL,
     earning             FLOAT NOT NULL,
     tip                 INTEGER NOT NULL DEFAULT 0,
@@ -44,3 +44,4 @@ CREATE TABLE driver_orders (
 
 -- +goose Down
 DROP TABLE driver_orders;
+DROP TYPE order_status;

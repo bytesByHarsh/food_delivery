@@ -89,7 +89,7 @@ type DriverOrder struct {
 	CustomerPhone    string
 	CustomerLat      string
 	CustomerLong     string
-	Status           NullOrderStatus
+	Status           OrderStatus
 	DeliveryDistance float64
 	Earning          float64
 	Tip              int32
