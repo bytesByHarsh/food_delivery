@@ -1,4 +1,18 @@
 definitions:
+  github_com_bytesByHarsh_food_delivery_driver_service_internal_database.OrderStatus:
+    enum:
+    - assigned
+    - in-progress
+    - completed
+    - cancelled
+    - unassigned
+    type: string
+    x-enum-varnames:
+    - OrderStatusAssigned
+    - OrderStatusInProgress
+    - OrderStatusCompleted
+    - OrderStatusCancelled
+    - OrderStatusUnassigned
   github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver:
     properties:
       data:
@@ -51,6 +65,61 @@ definitions:
     - phone_num
     - username
     type: object
+  models.CreateOrderReq:
+    properties:
+      cash_amount:
+        type: number
+      customer_addr:
+        type: string
+      customer_id:
+        type: string
+      customer_lat:
+        type: string
+      customer_long:
+        type: string
+      customer_name:
+        type: string
+      customer_phone:
+        type: string
+      delivery_dist:
+        type: number
+      earning:
+        type: number
+      is_cash_payment:
+        type: boolean
+      order_id:
+        type: string
+      restaurant_addr:
+        type: string
+      restaurant_id:
+        type: string
+      restaurant_lat:
+        type: string
+      restaurant_long:
+        type: string
+      restaurant_name:
+        type: string
+      tip:
+        type: integer
+    required:
+    - cash_amount
+    - customer_addr
+    - customer_id
+    - customer_lat
+    - customer_long
+    - customer_name
+    - customer_phone
+    - delivery_dist
+    - earning
+    - is_cash_payment
+    - order_id
+    - restaurant_addr
+    - restaurant_id
+    - restaurant_lat
+    - restaurant_long
+    - restaurant_name
+    - tip
+    type: object
   models.Driver:
     properties:
       age:
@@ -76,6 +145,20 @@ definitions:
       username:
         type: string
     type: object
+  models.DriverOrderStatus:
+    enum:
+    - on_the_way
+    - reached
+    - delivered
+    - returned
+    - canceled
+    type: string
+    x-enum-varnames:
+    - OrderStatusOnTheWay
+    - OrderStatusReached
+    - OrderStatusDelivered
+    - OrderStatusReturned
+    - OrderStatusCancelled
   models.JSONResp:
     properties:
       data: {}
@@ -89,12 +172,74 @@ definitions:
       error:
         type: string
     type: object
+  models.Order:
+    properties:
+      assigned_at:
+        type: string
+      cash_amount:
+        type: number
+      created_at:
+        type: string
+      customer_addr:
+        type: string
+      customer_id:
+        type: string
+      customer_lat:
+        type: string
+      customer_long:
+        type: string
+      customer_name:
+        type: string
+      customer_phone:
+        type: string
+      delivery_dist:
+        type: number
+      driver_id:
+        $ref: '#/definitions/uuid.NullUUID'
+      earning:
+        type: number
+      id:
+        type: string
+      is_cash_payment:
+        type: boolean
+      order_id:
+        type: string
+      restaurant_addr:
+        type: string
+      restaurant_id:
+        type: string
+      restaurant_lat:
+        type: string
+      restaurant_long:
+        type: string
+      restaurant_name:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_bytesByHarsh_food_delivery_driver_service_internal_database.OrderStatus'
+      tip:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.UpdateOrderStatusReq:
+    properties:
+      status:
+        $ref: '#/definitions/models.DriverOrderStatus'
+    type: object
   models.UpdatePasswordReq:
     properties:
       password:
         type: string
     required:
     - password
+    type: object
+  uuid.NullUUID:
+    properties:
+      uuid:
+        type: string
+      valid:
+        description: Valid is true if UUID is not NULL
+        type: boolean
     type: object
 info:
   contact:
@@ -114,6 +259,55 @@ paths:
       summary: Hello API
       tags:
       - Ping
+  /drivers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete driver from db by admin
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Delete driver from DB
+      tags:
+      - Drivers
+    get:
+      consumes:
+      - application/json
+      description: get another driver details
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Another Driver
+      tags:
+      - Drivers
   /drivers/list:
     get:
       consumes:
@@ -189,6 +383,32 @@ paths:
       summary: Get Driver
       tags:
       - Drivers
+  /drivers/me/password:
+    put:
+      consumes:
+      - application/json
+      description: update driver password
+      parameters:
+      - description: Password Body
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePasswordReq'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Update Driver Password
+      tags:
+      - Drivers
   /drivers/register:
     post:
       consumes:
@@ -215,35 +435,37 @@ paths:
       summary: Create Driver
       tags:
       - Drivers
-  /users/{id}:
-    delete:
+  /orders:
+    post:
       consumes:
       - application/json
-      description: delete driver from db by admin
+      description: create new order
       parameters:
-      - description: id
-        in: path
-        name: id
+      - description: Order Body
+        in: body
+        name: user
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/models.CreateOrderReq'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.JSONerrResponse'
+            $ref: '#/definitions/models.Order'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/models.JSONerrResponse'
-      summary: Delete driver from DB
+      summary: Add New Order
       tags:
-      - Drivers
-    get:
+      - Orders
+  /orders/{id}/accept:
+    put:
       consumes:
       - application/json
-      description: get another driver details
+      description: accept order by driver
       parameters:
       - description: id
         in: path
@@ -256,38 +478,73 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Driver'
+            $ref: '#/definitions/models.JSONResp'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/models.JSONerrResponse'
-      summary: Get Another Driver
+      summary: Accept Order
       tags:
-      - Drivers
-  /users/me/password:
+      - Orders
+  /orders/{id}/status:
     put:
       consumes:
       - application/json
-      description: update driver password
+      description: update order status
       parameters:
-      - description: Password Body
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: status Body
         in: body
-        name: password
+        name: status
         required: true
         schema:
-          $ref: '#/definitions/models.UpdatePasswordReq'
+          $ref: '#/definitions/models.UpdateOrderStatusReq'
       produces:
       - application/json
       responses:
-        "202":
-          description: Accepted
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/models.JSONerrResponse'
+            $ref: '#/definitions/models.JSONResp'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/models.JSONerrResponse'
-      summary: Update Driver Password
+      summary: Update Order Status
       tags:
-      - Drivers
+      - Orders
+  /orders/list/unassigned:
+    get:
+      consumes:
+      - application/json
+      description: get order list
+      parameters:
+      - description: Page Number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Items Per Page
+        in: query
+        name: items_per_page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Order'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Unassigned Order
+      tags:
+      - Orders
 swagger: "2.0"

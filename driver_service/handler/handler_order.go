@@ -12,6 +12,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// AddNewOrder godoc
+//
+//	@Summary		Add New Order
+//	@Description	create new order
+//	@Tags			Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		models.CreateOrderReq	true	"Order Body"
+//	@Success		201		{object}	models.Order
+//	@Failure		400		{object}	models.JSONerrResponse
+//	@Router			/orders [post]
 func AddNewOrder(w http.ResponseWriter, r *http.Request) {
 
 	params := models.CreateOrderReq{}
@@ -29,7 +40,7 @@ func AddNewOrder(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:        time.Now().UTC(),
 		UpdatedAt:        time.Now().UTC(),
 		DeletedAt:        sql.NullTime{},
-		DriverID:         params.DriverID,
+		DriverID:         uuid.NullUUID{},
 		OrderID:          params.OrderID,
 		RestaurantID:     params.RestaurantID,
 		RestaurantName:   params.RestaurantName,
@@ -65,6 +76,18 @@ func AddNewOrder(w http.ResponseWriter, r *http.Request) {
 	responseWithJson(w, http.StatusCreated, resp)
 }
 
+// GetUnassignedOrderList godoc
+//
+//	@Summary		Get Unassigned Order
+//	@Description	get order list
+//	@Tags			Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			page			query		int32	true	"Page Number"
+//	@Param			items_per_page	query		int32	true	"Items Per Page"
+//	@Success		201				{object}	models.Order
+//	@Failure		400				{object}	models.JSONerrResponse
+//	@Router			/orders/list/unassigned [get]
 func GetUnassignedOrderList(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	page, items_per_page, err := parsePaginatedReq(r)
 	if err != nil {
@@ -104,6 +127,17 @@ func GetUnassignedOrderList(w http.ResponseWriter, r *http.Request, driver datab
 	responseWithJson(w, http.StatusOK, resp)
 }
 
+// AcceptOrder godoc
+//
+//	@Summary		Accept Order
+//	@Description	accept order by driver
+//	@Tags			Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"id"
+//	@Success		200	{object}	models.JSONResp
+//	@Failure		400	{object}	models.JSONerrResponse
+//	@Router			/orders/{id}/accept [put]
 func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	id := chi.URLParam(r, "id")
 	orderId, err := uuid.Parse(id)
@@ -115,7 +149,7 @@ func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver)
 		return
 	}
 
-	dbOrder, err := apiCfg.DB.GetOrderById(r.Context(), driver.ID)
+	dbOrder, err := apiCfg.DB.GetOrderById(r.Context(), orderId)
 
 	if err != nil {
 		responseWithError(w, http.StatusNotFound,
@@ -141,6 +175,7 @@ func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver)
 		DriverID:   driverId,
 		UpdatedAt:  time.Now().UTC(),
 		AssignedAt: time.Now().UTC(),
+		Status:     database.OrderStatusAssigned,
 	})
 
 	if err != nil {
@@ -158,6 +193,18 @@ func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver)
 	responseWithJson(w, http.StatusAccepted, resp)
 }
 
+// UpdateOrderStatus godoc
+//
+//	@Summary		Update Order Status
+//	@Description	update order status
+//	@Tags			Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"ID"
+//	@Param			status	body		models.UpdateOrderStatusReq	true	"status Body"
+//	@Success		200		{object}	models.JSONResp
+//	@Failure		400		{object}	models.JSONerrResponse
+//	@Router			/orders/{id}/status [put]
 func UpdateOrderStatus(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	id := chi.URLParam(r, "id")
 	orderId, err := uuid.Parse(id)
@@ -186,6 +233,11 @@ func UpdateOrderStatus(w http.ResponseWriter, r *http.Request, driver database.D
 		status = database.OrderStatusCompleted
 	case models.OrderStatusCancelled:
 		status = database.OrderStatusCancelled
+	default:
+		responseWithError(w, http.StatusBadRequest,
+			fmt.Sprintf("Unidentified Status: %v", params.Status),
+		)
+		return
 	}
 
 	err = apiCfg.DB.UpdateOrderStatus(r.Context(), database.UpdateOrderStatusParams{
@@ -200,4 +252,11 @@ func UpdateOrderStatus(w http.ResponseWriter, r *http.Request, driver database.D
 		)
 		return
 	}
+
+	resp := models.JSONResp{
+		Status:  "success",
+		Message: "Order Status Updated",
+		Data:    nil,
+	}
+	responseWithJson(w, http.StatusAccepted, resp)
 }

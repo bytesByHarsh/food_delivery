@@ -152,6 +152,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/drivers/me/password": {
+            "put": {
+                "description": "update driver password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Drivers"
+                ],
+                "summary": "Update Driver Password",
+                "parameters": [
+                    {
+                        "description": "Password Body",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdatePasswordReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/drivers/register": {
             "post": {
                 "description": "create new driver",
@@ -192,47 +232,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/me/password": {
-            "put": {
-                "description": "update driver password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Drivers"
-                ],
-                "summary": "Update Driver Password",
-                "parameters": [
-                    {
-                        "description": "Password Body",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdatePasswordReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "202": {
-                        "description": "Accepted",
-                        "schema": {
-                            "$ref": "#/definitions/models.JSONerrResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.JSONerrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/{id}": {
+        "/drivers/{id}": {
             "get": {
                 "description": "get another driver details",
                 "consumes": [
@@ -305,9 +305,196 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/orders": {
+            "post": {
+                "description": "create new order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Add New Order",
+                "parameters": [
+                    {
+                        "description": "Order Body",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateOrderReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/list/unassigned": {
+            "get": {
+                "description": "get order list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get Unassigned Order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page Number",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items Per Page",
+                        "name": "items_per_page",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/accept": {
+            "put": {
+                "description": "accept order by driver",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Accept Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/status": {
+            "put": {
+                "description": "update order status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Update Order Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "status Body",
+                        "name": "status",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateOrderStatusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONResp"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONerrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "github_com_bytesByHarsh_food_delivery_driver_service_internal_database.OrderStatus": {
+            "type": "string",
+            "enum": [
+                "assigned",
+                "in-progress",
+                "completed",
+                "cancelled",
+                "unassigned"
+            ],
+            "x-enum-varnames": [
+                "OrderStatusAssigned",
+                "OrderStatusInProgress",
+                "OrderStatusCompleted",
+                "OrderStatusCancelled",
+                "OrderStatusUnassigned"
+            ]
+        },
         "github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver": {
             "type": "object",
             "properties": {
@@ -385,6 +572,81 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CreateOrderReq": {
+            "type": "object",
+            "required": [
+                "cash_amount",
+                "customer_addr",
+                "customer_id",
+                "customer_lat",
+                "customer_long",
+                "customer_name",
+                "customer_phone",
+                "delivery_dist",
+                "earning",
+                "is_cash_payment",
+                "order_id",
+                "restaurant_addr",
+                "restaurant_id",
+                "restaurant_lat",
+                "restaurant_long",
+                "restaurant_name",
+                "tip"
+            ],
+            "properties": {
+                "cash_amount": {
+                    "type": "number"
+                },
+                "customer_addr": {
+                    "type": "string"
+                },
+                "customer_id": {
+                    "type": "string"
+                },
+                "customer_lat": {
+                    "type": "string"
+                },
+                "customer_long": {
+                    "type": "string"
+                },
+                "customer_name": {
+                    "type": "string"
+                },
+                "customer_phone": {
+                    "type": "string"
+                },
+                "delivery_dist": {
+                    "type": "number"
+                },
+                "earning": {
+                    "type": "number"
+                },
+                "is_cash_payment": {
+                    "type": "boolean"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "restaurant_addr": {
+                    "type": "string"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                },
+                "restaurant_lat": {
+                    "type": "string"
+                },
+                "restaurant_long": {
+                    "type": "string"
+                },
+                "restaurant_name": {
+                    "type": "string"
+                },
+                "tip": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Driver": {
             "type": "object",
             "properties": {
@@ -423,6 +685,23 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DriverOrderStatus": {
+            "type": "string",
+            "enum": [
+                "on_the_way",
+                "reached",
+                "delivered",
+                "returned",
+                "canceled"
+            ],
+            "x-enum-varnames": [
+                "OrderStatusOnTheWay",
+                "OrderStatusReached",
+                "OrderStatusDelivered",
+                "OrderStatusReturned",
+                "OrderStatusCancelled"
+            ]
+        },
         "models.JSONResp": {
             "type": "object",
             "properties": {
@@ -443,6 +722,88 @@ const docTemplate = `{
                 }
             }
         },
+        "models.Order": {
+            "type": "object",
+            "properties": {
+                "assigned_at": {
+                    "type": "string"
+                },
+                "cash_amount": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "customer_addr": {
+                    "type": "string"
+                },
+                "customer_id": {
+                    "type": "string"
+                },
+                "customer_lat": {
+                    "type": "string"
+                },
+                "customer_long": {
+                    "type": "string"
+                },
+                "customer_name": {
+                    "type": "string"
+                },
+                "customer_phone": {
+                    "type": "string"
+                },
+                "delivery_dist": {
+                    "type": "number"
+                },
+                "driver_id": {
+                    "$ref": "#/definitions/uuid.NullUUID"
+                },
+                "earning": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_cash_payment": {
+                    "type": "boolean"
+                },
+                "order_id": {
+                    "type": "string"
+                },
+                "restaurant_addr": {
+                    "type": "string"
+                },
+                "restaurant_id": {
+                    "type": "string"
+                },
+                "restaurant_lat": {
+                    "type": "string"
+                },
+                "restaurant_long": {
+                    "type": "string"
+                },
+                "restaurant_name": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_bytesByHarsh_food_delivery_driver_service_internal_database.OrderStatus"
+                },
+                "tip": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateOrderStatusReq": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "$ref": "#/definitions/models.DriverOrderStatus"
+                }
+            }
+        },
         "models.UpdatePasswordReq": {
             "type": "object",
             "required": [
@@ -451,6 +812,18 @@ const docTemplate = `{
             "properties": {
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "uuid.NullUUID": {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if UUID is not NULL",
+                    "type": "boolean"
                 }
             }
         }

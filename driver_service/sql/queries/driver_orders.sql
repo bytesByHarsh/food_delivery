@@ -54,7 +54,7 @@ UPDATE driver_orders
 SET driver_id=$2,
     updated_at=$3,
     assigned_at=$4,
-    status="assigned"
+    status=$5
 WHERE id = $1 AND is_deleted=false
 RETURNING *;
 

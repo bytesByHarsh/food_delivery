@@ -22,6 +22,14 @@ func SetupRoutes(app *chi.Mux) {
 	driverRouter.Delete("/{id}", handler.MiddlewareAuth(handler.DbDeleteDriver))
 	driverRouter.Get("/list", handler.MiddlewareAuth(handler.GetDriverList))
 
+	// Orders
+	orderRouter := chi.NewRouter()
+	orderRouter.Post("/", handler.AddNewOrder)
+	orderRouter.Get("/list/unassigned", handler.MiddlewareAuth(handler.GetUnassignedOrderList))
+	orderRouter.Put("/{id}/accept", handler.MiddlewareAuth(handler.AcceptOrder))
+	orderRouter.Put("/{id}/status", handler.MiddlewareAuth(handler.UpdateOrderStatus))
+
 	v1Router.Mount("/drivers", driverRouter)
+	v1Router.Mount("/orders", orderRouter)
 	app.Mount("/v1", v1Router)
 }

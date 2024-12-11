@@ -396,7 +396,7 @@ UPDATE driver_orders
 SET driver_id=$2,
     updated_at=$3,
     assigned_at=$4,
-    status="assigned"
+    status=$5
 WHERE id = $1 AND is_deleted=false
 RETURNING id, driver_id, order_id, restaurant_id, restaurant_name, restaurant_addr, restaurant_lat, restaurant_long, customer_id, customer_addr, customer_name, customer_phone, customer_lat, customer_long, status, delivery_distance, earning, tip, is_cash_payment, cash_amount, created_at, assigned_at, updated_at, deleted_at, is_deleted
 `
@@ -406,6 +406,7 @@ type UpdateOrderDriverParams struct {
 	DriverID   uuid.NullUUID
 	UpdatedAt  time.Time
 	AssignedAt time.Time
+	Status     OrderStatus
 }
 
 func (q *Queries) UpdateOrderDriver(ctx context.Context, arg UpdateOrderDriverParams) error {
@@ -414,6 +415,7 @@ func (q *Queries) UpdateOrderDriver(ctx context.Context, arg UpdateOrderDriverPa
 		arg.DriverID,
 		arg.UpdatedAt,
 		arg.AssignedAt,
+		arg.Status,
 	)
 	return err
 }

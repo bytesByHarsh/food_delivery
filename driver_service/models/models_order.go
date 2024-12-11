@@ -8,24 +8,23 @@ import (
 )
 
 type CreateOrderReq struct {
-	DriverID         uuid.NullUUID `json:"driver_id" validate:"required"`
-	OrderID          uuid.UUID     `json:"order_id" validate:"required"`
-	RestaurantID     uuid.UUID     `json:"restaurant_id" validate:"required"`
-	RestaurantName   string        `json:"restaurant_name" validate:"required"`
-	RestaurantAddr   string        `json:"restaurant_addr" validate:"required"`
-	RestaurantLat    string        `json:"restaurant_lat" validate:"required"`
-	RestaurantLong   string        `json:"restaurant_long" validate:"required"`
-	CustomerID       uuid.UUID     `json:"customer_id" validate:"required"`
-	CustomerAddr     string        `json:"customer_addr" validate:"required"`
-	CustomerName     string        `json:"customer_name" validate:"required"`
-	CustomerPhone    string        `json:"customer_phone" validate:"required"`
-	CustomerLat      string        `json:"customer_lat" validate:"required"`
-	CustomerLong     string        `json:"customer_long" validate:"required"`
-	DeliveryDistance float64       `json:"delivery_dist" validate:"required"`
-	Earning          float64       `json:"earning" validate:"required"`
-	Tip              int32         `json:"tip" validate:"required"`
-	IsCashPayment    bool          `json:"is_cash_payment" validate:"required"`
-	CashAmount       float64       `json:"cash_amount" validate:"required"`
+	OrderID          uuid.UUID `json:"order_id" validate:"required"`
+	RestaurantID     uuid.UUID `json:"restaurant_id" validate:"required"`
+	RestaurantName   string    `json:"restaurant_name" validate:"required"`
+	RestaurantAddr   string    `json:"restaurant_addr" validate:"required"`
+	RestaurantLat    string    `json:"restaurant_lat" validate:"required"`
+	RestaurantLong   string    `json:"restaurant_long" validate:"required"`
+	CustomerID       uuid.UUID `json:"customer_id" validate:"required"`
+	CustomerAddr     string    `json:"customer_addr" validate:"required"`
+	CustomerName     string    `json:"customer_name" validate:"required"`
+	CustomerPhone    string    `json:"customer_phone" validate:"required"`
+	CustomerLat      string    `json:"customer_lat" validate:"required"`
+	CustomerLong     string    `json:"customer_long" validate:"required"`
+	DeliveryDistance float64   `json:"delivery_dist" validate:"required"`
+	Earning          float64   `json:"earning" validate:"required"`
+	Tip              int32     `json:"tip" validate:"required"`
+	IsCashPayment    bool      `json:"is_cash_payment" validate:"required"`
+	CashAmount       float64   `json:"cash_amount" validate:"required"`
 }
 
 type Order struct {
