@@ -37,20 +37,24 @@ ORDER BY
     updated_at DESC
 LIMIT $1 OFFSET $2;
 
--- name: GetAllOrder :many
+-- name: GetAllUnassignedOrder :many
 SELECT *
 FROM
     driver_orders
-WHERE is_deleted = false
+WHERE is_deleted = false AND status = 'unassigned'
 ORDER BY
     updated_at DESC
 LIMIT $1 OFFSET $2;
+
+-- name: GetUnassignedOrderCount :one
+SELECT COUNT(*) FROM driver_orders WHERE is_deleted=false AND status = 'unassigned';
 
 -- name: UpdateOrderDriver :exec
 UPDATE driver_orders
 SET driver_id=$2,
     updated_at=$3,
-    assigned_at=$4
+    assigned_at=$4,
+    status="assigned"
 WHERE id = $1 AND is_deleted=false
 RETURNING *;
 

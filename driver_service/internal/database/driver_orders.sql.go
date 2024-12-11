@@ -112,23 +112,23 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Drive
 	return i, err
 }
 
-const getAllOrder = `-- name: GetAllOrder :many
+const getAllUnassignedOrder = `-- name: GetAllUnassignedOrder :many
 SELECT id, driver_id, order_id, restaurant_id, restaurant_name, restaurant_addr, restaurant_lat, restaurant_long, customer_id, customer_addr, customer_name, customer_phone, customer_lat, customer_long, status, delivery_distance, earning, tip, is_cash_payment, cash_amount, created_at, assigned_at, updated_at, deleted_at, is_deleted
 FROM
     driver_orders
-WHERE is_deleted = false
+WHERE is_deleted = false AND status = 'unassigned'
 ORDER BY
     updated_at DESC
 LIMIT $1 OFFSET $2
 `
 
-type GetAllOrderParams struct {
+type GetAllUnassignedOrderParams struct {
 	Limit  int32
 	Offset int32
 }
 
-func (q *Queries) GetAllOrder(ctx context.Context, arg GetAllOrderParams) ([]DriverOrder, error) {
-	rows, err := q.db.QueryContext(ctx, getAllOrder, arg.Limit, arg.Offset)
+func (q *Queries) GetAllUnassignedOrder(ctx context.Context, arg GetAllUnassignedOrderParams) ([]DriverOrder, error) {
+	rows, err := q.db.QueryContext(ctx, getAllUnassignedOrder, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -380,11 +380,23 @@ func (q *Queries) GetOrderByOrderId(ctx context.Context, orderID uuid.UUID) (Dri
 	return i, err
 }
 
+const getUnassignedOrderCount = `-- name: GetUnassignedOrderCount :one
+SELECT COUNT(*) FROM driver_orders WHERE is_deleted=false AND status = 'unassigned'
+`
+
+func (q *Queries) GetUnassignedOrderCount(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getUnassignedOrderCount)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const updateOrderDriver = `-- name: UpdateOrderDriver :exec
 UPDATE driver_orders
 SET driver_id=$2,
     updated_at=$3,
-    assigned_at=$4
+    assigned_at=$4,
+    status="assigned"
 WHERE id = $1 AND is_deleted=false
 RETURNING id, driver_id, order_id, restaurant_id, restaurant_name, restaurant_addr, restaurant_lat, restaurant_long, customer_id, customer_addr, customer_name, customer_phone, customer_lat, customer_long, status, delivery_distance, earning, tip, is_cash_payment, cash_amount, created_at, assigned_at, updated_at, deleted_at, is_deleted
 `

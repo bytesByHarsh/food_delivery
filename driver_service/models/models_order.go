@@ -131,3 +131,17 @@ func CreateDriverOrderListResp(dbDriverOrderList []database.DriverOrder) []Drive
 	}
 	return orderList
 }
+
+type DriverOrderStatus string
+
+const (
+	OrderStatusOnTheWay  DriverOrderStatus = "on_the_way"
+	OrderStatusReached   DriverOrderStatus = "reached"
+	OrderStatusDelivered DriverOrderStatus = "delivered"
+	OrderStatusReturned  DriverOrderStatus = "returned"
+	OrderStatusCancelled DriverOrderStatus = "canceled"
+)
+
+type UpdateOrderStatusReq struct {
+	Status DriverOrderStatus `json:"status"`
+}
