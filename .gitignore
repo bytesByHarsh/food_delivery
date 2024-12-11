@@ -10,3 +10,4 @@ htmlcov
 .env
 .ruff_cache
 node_modules
+*.bkp

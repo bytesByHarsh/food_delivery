@@ -1,0 +1,550 @@
+definitions:
+  github_com_bytesByHarsh_food_delivery_driver_service_internal_database.OrderStatus:
+    enum:
+    - assigned
+    - in-progress
+    - completed
+    - cancelled
+    - unassigned
+    type: string
+    x-enum-varnames:
+    - OrderStatusAssigned
+    - OrderStatusInProgress
+    - OrderStatusCompleted
+    - OrderStatusCancelled
+    - OrderStatusUnassigned
+  github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Driver'
+        type: array
+      has_more:
+        type: boolean
+      items_per_page:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  models.AuthReq:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  models.AuthResp:
+    properties:
+      access_token:
+        type: string
+    type: object
+  models.CreateDriverByAdminReq:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone_num:
+        type: string
+      username:
+        type: string
+    required:
+    - age
+    - email
+    - name
+    - password
+    - phone_num
+    - username
+    type: object
+  models.CreateOrderReq:
+    properties:
+      cash_amount:
+        type: number
+      customer_addr:
+        type: string
+      customer_id:
+        type: string
+      customer_lat:
+        type: string
+      customer_long:
+        type: string
+      customer_name:
+        type: string
+      customer_phone:
+        type: string
+      delivery_dist:
+        type: number
+      earning:
+        type: number
+      is_cash_payment:
+        type: boolean
+      order_id:
+        type: string
+      restaurant_addr:
+        type: string
+      restaurant_id:
+        type: string
+      restaurant_lat:
+        type: string
+      restaurant_long:
+        type: string
+      restaurant_name:
+        type: string
+      tip:
+        type: integer
+    required:
+    - cash_amount
+    - customer_addr
+    - customer_id
+    - customer_lat
+    - customer_long
+    - customer_name
+    - customer_phone
+    - delivery_dist
+    - earning
+    - is_cash_payment
+    - order_id
+    - restaurant_addr
+    - restaurant_id
+    - restaurant_lat
+    - restaurant_long
+    - restaurant_name
+    - tip
+    type: object
+  models.Driver:
+    properties:
+      age:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      is_superuser:
+        type: boolean
+      name:
+        type: string
+      phone_number:
+        type: string
+      profile_img:
+        type: string
+      role:
+        type: integer
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  models.DriverOrderStatus:
+    enum:
+    - on_the_way
+    - reached
+    - delivered
+    - returned
+    - canceled
+    type: string
+    x-enum-varnames:
+    - OrderStatusOnTheWay
+    - OrderStatusReached
+    - OrderStatusDelivered
+    - OrderStatusReturned
+    - OrderStatusCancelled
+  models.JSONResp:
+    properties:
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  models.JSONerrResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.Order:
+    properties:
+      assigned_at:
+        type: string
+      cash_amount:
+        type: number
+      created_at:
+        type: string
+      customer_addr:
+        type: string
+      customer_id:
+        type: string
+      customer_lat:
+        type: string
+      customer_long:
+        type: string
+      customer_name:
+        type: string
+      customer_phone:
+        type: string
+      delivery_dist:
+        type: number
+      driver_id:
+        $ref: '#/definitions/uuid.NullUUID'
+      earning:
+        type: number
+      id:
+        type: string
+      is_cash_payment:
+        type: boolean
+      order_id:
+        type: string
+      restaurant_addr:
+        type: string
+      restaurant_id:
+        type: string
+      restaurant_lat:
+        type: string
+      restaurant_long:
+        type: string
+      restaurant_name:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_bytesByHarsh_food_delivery_driver_service_internal_database.OrderStatus'
+      tip:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.UpdateOrderStatusReq:
+    properties:
+      status:
+        $ref: '#/definitions/models.DriverOrderStatus'
+    type: object
+  models.UpdatePasswordReq:
+    properties:
+      password:
+        type: string
+    required:
+    - password
+    type: object
+  uuid.NullUUID:
+    properties:
+      uuid:
+        type: string
+      valid:
+        description: Valid is true if UUID is not NULL
+        type: boolean
+    type: object
+info:
+  contact:
+    email: harshmittal2210@gmail.com
+    name: Harsh Mittal
+paths:
+  /:
+    get:
+      description: get string by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResp'
+      summary: Hello API
+      tags:
+      - Ping
+  /drivers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete driver from db by admin
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Delete driver from DB
+      tags:
+      - Drivers
+    get:
+      consumes:
+      - application/json
+      description: get another driver details
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Another Driver
+      tags:
+      - Drivers
+  /drivers/list:
+    get:
+      consumes:
+      - application/json
+      description: driver list
+      parameters:
+      - description: Page Number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Items Per Page
+        in: query
+        name: items_per_page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_bytesByHarsh_food_delivery_driver_service_models.PaginatedListResp-models_Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Driver List
+      tags:
+      - Drivers
+  /drivers/login:
+    post:
+      consumes:
+      - application/json
+      description: get login token
+      parameters:
+      - description: Login Body
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AuthResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Login Driver
+      tags:
+      - Authentication
+  /drivers/me:
+    get:
+      consumes:
+      - application/json
+      description: get driver details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Driver
+      tags:
+      - Drivers
+  /drivers/me/password:
+    put:
+      consumes:
+      - application/json
+      description: update driver password
+      parameters:
+      - description: Password Body
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePasswordReq'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Update Driver Password
+      tags:
+      - Drivers
+  /drivers/register:
+    post:
+      consumes:
+      - application/json
+      description: create new driver
+      parameters:
+      - description: Driver Body
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateDriverByAdminReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Driver'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Create Driver
+      tags:
+      - Drivers
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: create new order
+      parameters:
+      - description: Order Body
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateOrderReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Order'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Add New Order
+      tags:
+      - Orders
+  /orders/{id}/accept:
+    put:
+      consumes:
+      - application/json
+      description: accept order by driver
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Accept Order
+      tags:
+      - Orders
+  /orders/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: update order status
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: status Body
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateOrderStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.JSONResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Update Order Status
+      tags:
+      - Orders
+  /orders/list/unassigned:
+    get:
+      consumes:
+      - application/json
+      description: get order list
+      parameters:
+      - description: Page Number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Items Per Page
+        in: query
+        name: items_per_page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Order'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONerrResponse'
+      summary: Get Unassigned Order
+      tags:
+      - Orders
+swagger: "2.0"

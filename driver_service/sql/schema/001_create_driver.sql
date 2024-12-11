@@ -1,0 +1,20 @@
+-- +goose Up
+CREATE TABLE drivers (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone_num VARCHAR(15) NOT NULL,
+    email VARCHAR(200) NOT NULL UNIQUE,
+    username VARCHAR(200) NOT NULL UNIQUE,
+    profile_img TEXT NOT NULL,
+    is_superuser BOOLEAN NOT NULL DEFAULT FALSE,
+    hashed_password TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMPTZ DEFAULT NULL,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+
+-- +goose Down
+DROP TABLE drivers;

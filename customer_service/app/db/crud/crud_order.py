@@ -26,7 +26,7 @@ from app.schemas.v1.schema_order import (
     OrderAddOnRead,
     OrderUpdateDriverDetails,
 )
-from app.core.http_exceptions import ForbiddenException
+from app.core.http_exceptions import ForbiddenException, NotFoundException
 
 from app.utils.paginated import (
     paginated_response,
@@ -104,7 +104,8 @@ async def get_order_details(
     db: AsyncSession,
 ):
     order_db = await crud_order.get(db=db, id=order_id)
-
+    if order_db == None:
+        raise NotFoundException("Order not found")
     items = await crud_orderItem.get_multi(
         db=db,
         limit=100,
