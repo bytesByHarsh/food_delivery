@@ -15,6 +15,8 @@ type EnvConfig struct {
 
 	SECRET_KEY     string
 	JWT_SECRET_KEY string
+
+	ORDER_API_BASE string
 }
 
 var Cfg EnvConfig
@@ -34,6 +36,7 @@ func ReadEnvFile(envPath string) {
 	Cfg.DB_URL = os.Getenv("DB_URL")
 	Cfg.SECRET_KEY = os.Getenv("SECRET_KEY")
 	Cfg.JWT_SECRET_KEY = os.Getenv("JWT_SECRET_KEY")
+	Cfg.ORDER_API_BASE = os.Getenv("ORDER_API_BASE")
 
 	if Cfg.SERVER_LINK == "" {
 		Cfg.SERVER_LINK = "0.0.0.0"
@@ -48,6 +51,10 @@ func ReadEnvFile(envPath string) {
 	}
 	if Cfg.JWT_SECRET_KEY == "" {
 		log.Fatal("JWT Token not defined is not Mentioned")
+	}
+
+	if Cfg.ORDER_API_BASE == "" {
+		Cfg.ORDER_API_BASE = "http://0.0.0.0:9000/api/v1"
 	}
 }
 

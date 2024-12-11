@@ -82,7 +82,7 @@ async def order_list(
     )
 
 @router.put("/assign/{order_id}")
-async def create_order(
+async def assign_order_driver(
     request: Request,
     order_id: UUID,
     driver_details:OrderUpdateDriverDetails,

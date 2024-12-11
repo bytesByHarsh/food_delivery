@@ -2,6 +2,8 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -28,4 +30,30 @@ func responseWithError(w http.ResponseWriter, code int, msg string) {
 	responseWithJson(w, code, models.JSONerrResponse{
 		Error: msg,
 	})
+}
+
+func sendHTTPReq(method, url string, body io.Reader) ([]byte, error) {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		fmt.Printf("Error creating request: %v\n", err)
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("Error sending request: %v\n", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// Read the response
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Error reading response: %v\n", err)
+		return nil, err
+	}
+
+	return respBody, nil
 }

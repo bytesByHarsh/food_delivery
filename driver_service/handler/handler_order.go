@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/bytesByHarsh/food_delivery/driver_service/config"
 	"github.com/bytesByHarsh/food_delivery/driver_service/internal/database"
 	"github.com/bytesByHarsh/food_delivery/driver_service/models"
 	"github.com/go-chi/chi"
@@ -140,7 +143,7 @@ func GetUnassignedOrderList(w http.ResponseWriter, r *http.Request, driver datab
 //	@Router			/orders/{id}/accept [put]
 func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver) {
 	id := chi.URLParam(r, "id")
-	orderId, err := uuid.Parse(id)
+	driverOrderId, err := uuid.Parse(id)
 
 	if err != nil {
 		responseWithError(w, http.StatusNotFound,
@@ -149,7 +152,7 @@ func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver)
 		return
 	}
 
-	dbOrder, err := apiCfg.DB.GetOrderById(r.Context(), orderId)
+	dbOrder, err := apiCfg.DB.GetOrderById(r.Context(), driverOrderId)
 
 	if err != nil {
 		responseWithError(w, http.StatusNotFound,
@@ -171,7 +174,7 @@ func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver)
 	}
 
 	err = apiCfg.DB.UpdateOrderDriver(r.Context(), database.UpdateOrderDriverParams{
-		ID:         orderId,
+		ID:         driverOrderId,
 		DriverID:   driverId,
 		UpdatedAt:  time.Now().UTC(),
 		AssignedAt: time.Now().UTC(),
@@ -184,6 +187,20 @@ func AcceptOrder(w http.ResponseWriter, r *http.Request, driver database.Driver)
 		)
 		return
 	}
+
+	// Update status to Order Service
+	url := config.Cfg.ORDER_API_BASE + fmt.Sprintf("/orders/assign/%v", dbOrder.OrderID)
+	payload := models.OrderService_UpdateDriverReq{
+		DeliveryPersonName: driver.Name,
+		DeliveryPersonId:   driver.ID,
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Printf("Error marshaling payload: %v\n", err)
+		return
+	}
+	sendHTTPReq(http.MethodPut, url, bytes.NewBuffer(payloadBytes))
 
 	resp := models.JSONResp{
 		Status:  "success",
