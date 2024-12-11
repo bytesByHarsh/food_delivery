@@ -40,20 +40,32 @@ async def create_order(
 ) -> Any:
     order = await add_new_order(user=current_user, order=order, db=db)
     ## Ask for driver
-    url = f"{settings.DRIVER_BASE_API}/orders/create"
+    url = f"{settings.DRIVER_BASE_API}/orders"
     query_params = {
-        "rest_id":str(order.restaurant_id),
-        "rest_address": "Dummy Address 1",
-        "rest_location":{
-            "lat":75.654,
-            "long":84.564
-        },
-        "delivery_distance": 88,
-        "price":int(order.total_cost),
-        "tip":0,
-        "order_id":str(order.id)
+        "cash_amount":-1,
+        "customer_addr":"Dummy Address",
+        "customer_id": str(current_user.id),
+        "customer_lat": "654.64565",
+        "customer_long": "66.6546565",
+        "customer_name": current_user.name,
+        "customer_phone": str(current_user.phone) if current_user.phone != "" else " ",
+        "delivery_dist": 88,
+        "earning":order.total_cost,
+        "is_cash_payment":True,
+        "order_id":str(order.id),
+        "restaurant_addr": "Dummy Address 1",
+        "restaurant_id":str(order.restaurant_id),
+        "restaurant_lat": "78.654654",
+        "restaurant_long": "156.654564",
+        "restaurant_name": "Dummy Name 1",
+        "tip":-1,
     }
+
     response = requests.post(url, json=query_params)
+    if response.status_code == 201:
+        print("New order created in driver service")
+    else:
+        print(f"Error in creating order in driver service : {response.content}")
     return order
 
 

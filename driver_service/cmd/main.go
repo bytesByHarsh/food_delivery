@@ -10,6 +10,7 @@ import (
 	db "github.com/bytesByHarsh/food_delivery/driver_service/database"
 	"github.com/bytesByHarsh/food_delivery/driver_service/router"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -34,6 +35,9 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           300,
 	}))
+	app.Use(middleware.RequestID)
+	app.Use(middleware.Logger)
+	app.Use(middleware.Recoverer)
 
 	// Swagger
 	api.SwaggerInfo.Title = "My Information Server"

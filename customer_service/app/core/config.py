@@ -135,7 +135,7 @@ class Settings(BaseSettings):
         return f"{self.STATIC_FILE_FOLDER}/{self.PROFILE_IMAGE_FOLDER}"
 
     RESTAURANT_BASE_API: str = "http://0.0.0.0:9001"
-    DRIVER_BASE_API: str = "http://0.0.0.0:3000/api/v1"
+    DRIVER_BASE_API: str = "http://0.0.0.0:3000/v1"
 
 unset_env()
 settings = Settings()  # type: ignore
